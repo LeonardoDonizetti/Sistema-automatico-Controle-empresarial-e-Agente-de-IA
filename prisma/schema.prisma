@@ -6,12 +6,17 @@ datasource db {
   provider = "postgresql"
 }
 
+enum Cargo {
+  admin
+  atendente
+}
+
 model Usuario {
   id        Int      @id @default(autoincrement())
   nome      String
   email     String   @unique
   senhaHash String   @map("senha_hash")
-  cargo     String
+  cargo     Cargo
   ativo     Boolean  @default(true)
   criadoEm  DateTime @default(now()) @map("criado_em")
   atualizadoEm DateTime @updatedAt @map("atualizado_em")

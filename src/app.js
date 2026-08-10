@@ -4,6 +4,8 @@ const cors = require("cors");
 const rateLimit = require("express-rate-limit");
 
 const authRoutes = require("./routes/authRoutes");
+const usuarioRoutes = require("./routes/usuarioRoutes");
+const clienteRoutes = require("./routes/clienteRoutes");
 
 const app = express();
 
@@ -39,6 +41,8 @@ app.use(limiter);
 
 // Rotas de autenticação
 app.use("/api/auth", authRoutes);
+app.use("/api/usuarios", usuarioRoutes);
+app.use("/api/clientes", clienteRoutes);
 
 // Rota de teste
 app.get("/api/health", (req, res) => {
