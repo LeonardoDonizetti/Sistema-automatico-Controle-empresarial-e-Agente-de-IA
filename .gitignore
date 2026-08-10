@@ -1,3 +1,6 @@
+#gitignore com arquivos para nao ser enviado para o github 
+#NAO APAGAR ARQUIVO
+
 node_modules/
 .env
 .env.*
