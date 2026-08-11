@@ -11,6 +11,13 @@ enum Cargo {
   atendente
 }
 
+enum StatusAtendimento {
+  aguardando
+  em_atendimento
+  resolvido
+  fechado
+}
+
 model Usuario {
   id        Int      @id @default(autoincrement())
   nome      String
@@ -43,7 +50,7 @@ model Conversa {
   clienteId   Int       @map("cliente_id")
   atendenteId Int?      @map("atendente_id")
   setor       String?
-  status      String    @default("aguardando")
+  status      StatusAtendimento @default(aguardando)
   criadoEm    DateTime  @default(now()) @map("criado_em")
   atualizadoEm DateTime  @updatedAt @map("atualizado_em")
 
