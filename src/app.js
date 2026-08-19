@@ -6,6 +6,8 @@ const rateLimit = require("express-rate-limit");
 const authRoutes = require("./routes/authRoutes");
 const usuarioRoutes = require("./routes/usuarioRoutes");
 const clienteRoutes = require("./routes/clienteRoutes");
+const atendimentoRoutes = require("./routes/atendimentoRoutes");
+const alertaRoutes = require("./routes/alertaRoutes");
 
 const app = express();
 
@@ -43,6 +45,8 @@ app.use(limiter);
 app.use("/api/auth", authRoutes);
 app.use("/api/usuarios", usuarioRoutes);
 app.use("/api/clientes", clienteRoutes);
+app.use("/api/atendimentos", atendimentoRoutes);
+app.use("/api/alertas", alertaRoutes);
 
 // Rota de teste
 app.get("/api/health", (req, res) => {
