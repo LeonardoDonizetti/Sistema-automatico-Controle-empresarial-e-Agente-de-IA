@@ -6,9 +6,12 @@ function minutosParaMs(minutos) {
 
 async function listarAlertas(req, res) {
     try {
-        const minutosSemResponsavel = Number(process.env.ALERTA_SEM_RESPONSAVEL_MINUTOS) || 30;
-        const minutosClienteAguardando = Number(process.env.ALERTA_CLIENTE_AGUARDANDO_MINUTOS) || 30;
-
+        const minutosSemResponsavel = process.env.ALERTA_SEM_RESPONSAVEL_MINUTOS !== undefined
+    ? Number(process.env.ALERTA_SEM_RESPONSAVEL_MINUTOS)
+    : 30;
+const minutosClienteAguardando = process.env.ALERTA_CLIENTE_AGUARDANDO_MINUTOS !== undefined
+    ? Number(process.env.ALERTA_CLIENTE_AGUARDANDO_MINUTOS)
+    : 30;
         const agora = new Date();
         const limiteSemResponsavel = new Date(agora.getTime() - minutosParaMs(minutosSemResponsavel));
         const limiteClienteAguardando = new Date(agora.getTime() - minutosParaMs(minutosClienteAguardando));
