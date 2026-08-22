@@ -9,6 +9,7 @@ const clienteRoutes = require("./routes/clienteRoutes");
 const atendimentoRoutes = require("./routes/atendimentoRoutes");
 const alertaRoutes = require("./routes/alertaRoutes");
 const pedidoRoutes = require("./routes/pedidoRoutes");
+app.use("/api/pedidos", pedidoRoutes);
 
 const app = express();
 
