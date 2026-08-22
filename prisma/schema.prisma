@@ -6,6 +6,15 @@ datasource db {
   provider = "postgresql"
 }
 
+enum StatusPedido {
+  orcamento
+  aguardando_aprovacao
+  aprovado
+  em_producao
+  pronto
+  entregue
+}
+
 enum Cargo {
   admin
   atendente
@@ -95,4 +104,36 @@ model HistoricoAtendimento {
   @@index([atendimentoId])
   @@index([criadoEm])
   @@map("historico_atendimentos")
+}
+
+model Pedido {
+  id            Int          @id @default(autoincrement())
+  atendimentoId Int          @map("atendimento_id")
+  clienteId     Int          @map("cliente_id")
+  status        StatusPedido @default(orcamento)
+  observacoes   String?
+  criadoEm      DateTime     @default(now()) @map("criado_em")
+  atualizadoEm  DateTime     @updatedAt @map("atualizado_em")
+
+  atendimento Conversa     @relation(fields: [atendimentoId], references: [id])
+  cliente     Cliente      @relation(fields: [clienteId], references: [id])
+  itens       ItemPedido[]
+
+  @@index([atendimentoId])
+  @@index([clienteId])
+  @@index([status])
+  @@map("pedidos")
+}
+
+model ItemPedido {
+  id                    Int    @id @default(autoincrement())
+  pedidoId              Int    @map("pedido_id")
+  descricao             String
+  quantidade            Int
+  precoUnitarioCentavos Int    @map("preco_unitario_centavos")
+
+  pedido Pedido @relation(fields: [pedidoId], references: [id], onDelete: Cascade)
+
+  @@index([pedidoId])
+  @@map("itens_pedido")
 }
