@@ -63,11 +63,14 @@ model Conversa {
   status       StatusAtendimento @default(aguardando)
   criadoEm     DateTime          @default(now()) @map("criado_em")
   atualizadoEm DateTime          @updatedAt @map("atualizado_em")
+  historico HistoricoAtendimento[]
+  pedidos Pedido[]
 
   cliente   Cliente                @relation(fields: [clienteId], references: [id])
   atendente Usuario?               @relation(fields: [atendenteId], references: [id])
   mensagens Mensagem[]
   historico HistoricoAtendimento[]
+  pedidos Pedido[]
 
   @@index([clienteId])
   @@index([atendenteId])
@@ -136,4 +139,4 @@ model ItemPedido {
 
   @@index([pedidoId])
   @@map("itens_pedido")
-}
+} 
