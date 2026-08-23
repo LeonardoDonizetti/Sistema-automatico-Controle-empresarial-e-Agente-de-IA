@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Login from "./pages/Login";
+import Atendimentos from "./pages/Atendimentos";
 
 function App() {
     const [usuario, setUsuario] = useState(() => {
@@ -18,10 +19,24 @@ function App() {
     }
 
     return (
-        <div style={{ padding: 20, fontFamily: "sans-serif" }}>
-            <h1>Bem-vindo, {usuario.nome}</h1>
-            <p>Cargo: {usuario.cargo}</p>
-            <button onClick={handleLogout}>Sair</button>
+        <div>
+            <header
+                style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    padding: "12px 20px",
+                    borderBottom: "1px solid #ddd",
+                    fontFamily: "sans-serif",
+                }}
+            >
+                <strong>Sistema de Atendimento</strong>
+                <div>
+                    {usuario.nome} ({usuario.cargo}){" "}
+                    <button onClick={handleLogout}>Sair</button>
+                </div>
+            </header>
+            <Atendimentos />
         </div>
     );
 }
