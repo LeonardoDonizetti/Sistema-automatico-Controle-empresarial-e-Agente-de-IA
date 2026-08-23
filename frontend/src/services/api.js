@@ -17,6 +17,13 @@ async function request(endpoint, options = {}) {
         headers,
     });
 
+    if (resposta.status === 401) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("usuario");
+        window.location.reload();
+        throw new Error("Sessão expirada. Faça login novamente.");
+    }
+
     const dados = await resposta.json().catch(() => null);
 
     if (!resposta.ok) {
