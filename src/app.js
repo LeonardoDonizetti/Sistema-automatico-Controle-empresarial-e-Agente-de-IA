@@ -9,6 +9,7 @@ const clienteRoutes = require("./routes/clienteRoutes");
 const atendimentoRoutes = require("./routes/atendimentoRoutes");
 const alertaRoutes = require("./routes/alertaRoutes");
 const pedidoRoutes = require("./routes/pedidoRoutes");
+const dashboardRoutes = require("./routes/dashboardRoutes");
 
 const app = express();
 
@@ -49,6 +50,7 @@ app.use("/api/clientes", clienteRoutes);
 app.use("/api/atendimentos", atendimentoRoutes);
 app.use("/api/alertas", alertaRoutes);
 app.use("/api/pedidos", pedidoRoutes);
+app.use("/api/dashboard", dashboardRoutes);
 
 // Rota de teste
 app.get("/api/health", (req, res) => {
