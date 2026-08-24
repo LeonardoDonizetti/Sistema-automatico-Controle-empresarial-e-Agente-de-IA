@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, NavLink } from "react-router-dom";
 import Login from "./pages/Login";
 import Atendimentos from "./pages/Atendimentos";
 import AtendimentoDetalhe from "./pages/AtendimentoDetalhe";
+import Clientes from "./pages/Clientes";
 
 function App() {
     const [usuario, setUsuario] = useState(() => {
@@ -20,6 +21,13 @@ function App() {
         return <Login aoLogar={setUsuario} />;
     }
 
+    const linkStyle = ({ isActive }) => ({
+        marginRight: 16,
+        fontWeight: isActive ? "bold" : "normal",
+        textDecoration: "none",
+        color: isActive ? "#111" : "#555",
+    });
+
     return (
         <div>
             <header
@@ -32,7 +40,17 @@ function App() {
                     fontFamily: "sans-serif",
                 }}
             >
-                <strong>Sistema de Atendimento</strong>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                    <strong style={{ marginRight: 24 }}>Sistema de Atendimento</strong>
+                    <nav>
+                        <NavLink to="/atendimentos" style={linkStyle}>
+                            Atendimentos
+                        </NavLink>
+                        <NavLink to="/clientes" style={linkStyle}>
+                            Clientes
+                        </NavLink>
+                    </nav>
+                </div>
                 <div>
                     {usuario.nome} ({usuario.cargo}){" "}
                     <button onClick={handleLogout}>Sair</button>
@@ -43,6 +61,7 @@ function App() {
                 <Route path="/" element={<Navigate to="/atendimentos" />} />
                 <Route path="/atendimentos" element={<Atendimentos />} />
                 <Route path="/atendimentos/:id" element={<AtendimentoDetalhe />} />
+                <Route path="/clientes" element={<Clientes />} />
             </Routes>
         </div>
     );
