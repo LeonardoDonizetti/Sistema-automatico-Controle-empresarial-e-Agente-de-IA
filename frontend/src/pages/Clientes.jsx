@@ -74,13 +74,8 @@ export default function Clientes() {
     }
 
     async function criarAtendimentoParaCliente(clienteId) {
-        const setor = window.prompt("Setor do atendimento (opcional):", "");
-
         try {
-            const resposta = await api.post("/atendimentos", {
-                clienteId,
-                ...(setor ? { setor } : {}),
-            });
+            const resposta = await api.post("/atendimentos", { clienteId });
             navigate(`/atendimentos/${resposta.atendimento.id}`);
         } catch (error) {
             alert(error.message);
