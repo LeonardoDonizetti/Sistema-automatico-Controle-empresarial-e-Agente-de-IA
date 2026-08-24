@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { api } from "../services/api";
 
 const CORES_STATUS = {
@@ -33,7 +34,10 @@ export default function Atendimentos() {
         carregarAtendimentos();
     }, [filtroStatus]);
 
-    async function assumirAtendimento(id) {
+    async function assumirAtendimento(id, evento) {
+        evento.preventDefault();
+        evento.stopPropagation();
+
         try {
             await api.post(`/atendimentos/${id}/assumir`, {});
             carregarAtendimentos();
@@ -76,8 +80,14 @@ export default function Atendimentos() {
                 <tbody>
                     {atendimentos.map((atendimento) => (
                         <tr key={atendimento.id} style={{ borderBottom: "1px solid #eee" }}>
-                            <td style={{ padding: 8 }}>{atendimento.id}</td>
-                            <td style={{ padding: 8 }}>{atendimento.cliente?.nome}</td>
+                            <td style={{ padding: 8 }}>
+                                <Link to={`/atendimentos/${atendimento.id}`}>{atendimento.id}</Link>
+                            </td>
+                            <td style={{ padding: 8 }}>
+                                <Link to={`/atendimentos/${atendimento.id}`}>
+                                    {atendimento.cliente?.nome}
+                                </Link>
+                            </td>
                             <td style={{ padding: 8 }}>{atendimento.setor || "-"}</td>
                             <td style={{ padding: 8 }}>
                                 <span
@@ -95,7 +105,7 @@ export default function Atendimentos() {
                             <td style={{ padding: 8 }}>{atendimento.atendente?.nome || "-"}</td>
                             <td style={{ padding: 8 }}>
                                 {!atendimento.atendenteId && (
-                                    <button onClick={() => assumirAtendimento(atendimento.id)}>
+                                    <button onClick={(e) => assumirAtendimento(atendimento.id, e)}>
                                         Assumir
                                     </button>
                                 )}
