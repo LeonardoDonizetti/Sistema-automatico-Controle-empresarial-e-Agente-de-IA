@@ -4,6 +4,7 @@ import Login from "./pages/Login";
 import Atendimentos from "./pages/Atendimentos";
 import AtendimentoDetalhe from "./pages/AtendimentoDetalhe";
 import Clientes from "./pages/Clientes";
+import Dashboard from "./pages/Dashboard";
 
 function App() {
     const [usuario, setUsuario] = useState(() => {
