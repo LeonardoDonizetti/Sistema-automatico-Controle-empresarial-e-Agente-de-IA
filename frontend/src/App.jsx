@@ -1,6 +1,8 @@
 import { useState } from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
 import Atendimentos from "./pages/Atendimentos";
+import AtendimentoDetalhe from "./pages/AtendimentoDetalhe";
 
 function App() {
     const [usuario, setUsuario] = useState(() => {
@@ -36,7 +38,12 @@ function App() {
                     <button onClick={handleLogout}>Sair</button>
                 </div>
             </header>
-            <Atendimentos />
+
+            <Routes>
+                <Route path="/" element={<Navigate to="/atendimentos" />} />
+                <Route path="/atendimentos" element={<Atendimentos />} />
+                <Route path="/atendimentos/:id" element={<AtendimentoDetalhe />} />
+            </Routes>
         </div>
     );
 }
