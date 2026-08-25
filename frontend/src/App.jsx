@@ -6,6 +6,7 @@ import AtendimentoDetalhe from "./pages/AtendimentoDetalhe";
 import Clientes from "./pages/Clientes";
 import Usuarios from "./pages/Usuarios";
 import Pedidos from "./pages/Pedidos";
+import Alertas from "./pages/Alertas";
 import Dashboard from "./pages/Dashboard";
 
 function App() {
@@ -58,6 +59,9 @@ function App() {
                         <NavLink to="/pedidos" style={linkStyle}>
                             Pedidos
                         </NavLink>
+                        <NavLink to="/alertas" style={linkStyle}>
+                            Alertas
+                        </NavLink>
                         {usuario.cargo === "admin" && (
                             <NavLink to="/usuarios" style={linkStyle}>
                                 Usuários
@@ -78,6 +82,7 @@ function App() {
                 <Route path="/atendimentos/:id" element={<AtendimentoDetalhe />} />
                 <Route path="/clientes" element={<Clientes />} />
                 <Route path="/pedidos" element={<Pedidos />} />
+                <Route path="/alertas" element={<Alertas />} />
                 <Route path="/usuarios" element={<Usuarios />} />
             </Routes>
         </div>
