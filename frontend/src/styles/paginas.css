@@ -1,0 +1,280 @@
+.page {
+    font-family: sans-serif;
+    padding: 20px;
+}
+
+.page-narrow {
+    max-width: 800px;
+}
+
+.page-message {
+    padding: 20px;
+}
+
+.error-text {
+    color: red;
+}
+
+.btn-toggle {
+    margin-bottom: 16px;
+}
+
+.btn-mb {
+    margin-bottom: 12px;
+}
+
+.btn-spaced {
+    margin-right: 8px;
+}
+
+.filter-row {
+    margin-bottom: 16px;
+}
+
+.actions-row {
+    margin-bottom: 20px;
+}
+
+.form-inline {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.form-inline--wrap {
+    flex-wrap: wrap;
+}
+
+.form-input {
+    padding: 6px;
+}
+
+.edit-input {
+    padding: 4px;
+}
+
+.edit-input-block {
+    padding: 4px;
+    margin-bottom: 4px;
+    display: block;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.data-table thead tr {
+    text-align: left;
+    border-bottom: 2px solid #ddd;
+}
+
+.data-table th,
+.data-table td {
+    padding: 8px;
+}
+
+.data-table tbody tr {
+    border-bottom: 1px solid #eee;
+}
+
+.mb-24 {
+    margin-bottom: 24px;
+}
+
+.status-badge {
+    color: white;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+.status-aguardando {
+    background-color: #f59e0b;
+}
+
+.status-em_atendimento {
+    background-color: #3b82f6;
+}
+
+.status-resolvido {
+    background-color: #10b981;
+}
+
+.status-fechado {
+    background-color: #6b7280;
+}
+
+.status-orcamento {
+    background-color: #6b7280;
+}
+
+.status-aguardando_aprovacao {
+    background-color: #f59e0b;
+}
+
+.status-aprovado {
+    background-color: #3b82f6;
+}
+
+.status-em_producao {
+    background-color: #8b5cf6;
+}
+
+.status-pronto {
+    background-color: #10b981;
+}
+
+.status-entregue {
+    background-color: #111827;
+}
+
+.status-ativo {
+    background-color: #10b981;
+}
+
+.status-inativo {
+    background-color: #6b7280;
+}
+
+.alert-badge-danger {
+    background-color: #ef4444;
+}
+
+.alert-badge-warning {
+    background-color: #f59e0b;
+}
+
+.login-container {
+    max-width: 360px;
+    margin: 80px auto;
+    font-family: sans-serif;
+}
+
+.form-group {
+    margin-bottom: 12px;
+}
+
+.input-block {
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+}
+
+.btn-block {
+    width: 100%;
+    padding: 10px;
+}
+
+.card-row {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+}
+
+.card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 16px;
+    min-width: 160px;
+}
+
+.card-value {
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.stats-row {
+    display: flex;
+    gap: 40px;
+    flex-wrap: wrap;
+}
+
+.messages-box {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 12px;
+    max-height: 300px;
+    overflow-y: auto;
+    margin-bottom: 12px;
+}
+
+.message-row {
+    margin-bottom: 8px;
+}
+
+.message-row--left {
+    text-align: left;
+}
+
+.message-row--right {
+    text-align: right;
+}
+
+.message-bubble {
+    display: inline-block;
+    padding: 6px 10px;
+    border-radius: 8px;
+}
+
+.message-bubble--cliente {
+    background-color: #f3f4f6;
+}
+
+.message-bubble--atendente {
+    background-color: #dbeafe;
+}
+
+.message-meta {
+    font-size: 11px;
+    color: #888;
+}
+
+.message-form {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+}
+
+.message-input {
+    flex: 1;
+    padding: 8px;
+}
+
+.order-card {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 12px;
+    margin-bottom: 12px;
+}
+
+.order-form {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 12px;
+    margin-bottom: 24px;
+}
+
+.order-item-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.order-item-desc {
+    flex: 2;
+    padding: 6px;
+}
+
+.flex-1-padded {
+    flex: 1;
+    padding: 6px;
+}
+
+.history-item {
+    margin-bottom: 4px;
+}

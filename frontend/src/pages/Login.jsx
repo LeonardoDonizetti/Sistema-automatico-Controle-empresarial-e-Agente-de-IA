@@ -25,31 +25,31 @@ export default function Login({ aoLogar }) {
     }
 
     return (
-        <div style={{ maxWidth: 360, margin: "80px auto", fontFamily: "sans-serif" }}>
+        <div className="login-container">
             <h1>Sistema de Atendimento</h1>
             <form onSubmit={handleSubmit}>
-                <div style={{ marginBottom: 12 }}>
+                <div className="form-group">
                     <label>E-mail</label>
                     <input
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         required
-                        style={{ width: "100%", padding: 8, boxSizing: "border-box" }}
+                        className="input-block"
                     />
                 </div>
-                <div style={{ marginBottom: 12 }}>
+                <div className="form-group">
                     <label>Senha</label>
                     <input
                         type="password"
                         value={senha}
                         onChange={(e) => setSenha(e.target.value)}
                         required
-                        style={{ width: "100%", padding: 8, boxSizing: "border-box" }}
+                        className="input-block"
                     />
                 </div>
-                {erro && <p style={{ color: "red" }}>{erro}</p>}
-                <button type="submit" disabled={carregando} style={{ width: "100%", padding: 10 }}>
+                {erro && <p className="error-text">{erro}</p>}
+                <button type="submit" disabled={carregando} className="btn-block">
                     {carregando ? "Entrando..." : "Entrar"}
                 </button>
             </form>

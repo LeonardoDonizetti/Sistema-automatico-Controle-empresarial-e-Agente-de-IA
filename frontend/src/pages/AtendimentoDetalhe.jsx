@@ -140,11 +140,11 @@ export default function AtendimentoDetalhe() {
     }
 
     if (carregando) {
-        return <p style={{ padding: 20 }}>Carregando...</p>;
+        return <p className="page-message">Carregando...</p>;
     }
 
     if (erro) {
-        return <p style={{ padding: 20, color: "red" }}>{erro}</p>;
+        return <p className="page-message error-text">{erro}</p>;
     }
 
     if (!atendimento) {
@@ -152,7 +152,7 @@ export default function AtendimentoDetalhe() {
     }
 
     return (
-        <div style={{ fontFamily: "sans-serif", padding: 20, maxWidth: 800 }}>
+        <div className="page page-narrow">
             <Link to="/atendimentos">← Voltar para a lista</Link>
 
             <h2>Atendimento #{atendimento.id}</h2>
@@ -170,12 +170,12 @@ export default function AtendimentoDetalhe() {
                 <strong>Atendente:</strong> {atendimento.atendente?.nome || "Sem responsável"}
             </p>
 
-            <div style={{ marginBottom: 20 }}>
+            <div className="actions-row">
                 {TRANSICOES[atendimento.status].map((proximoStatus) => (
                     <button
                         key={proximoStatus}
                         onClick={() => mudarStatus(proximoStatus)}
-                        style={{ marginRight: 8 }}
+                        className="btn-spaced"
                     >
                         Mudar para: {proximoStatus}
                     </button>
@@ -183,49 +183,38 @@ export default function AtendimentoDetalhe() {
             </div>
 
             <h3>Mensagens</h3>
-            <div
-                style={{
-                    border: "1px solid #ddd",
-                    borderRadius: 4,
-                    padding: 12,
-                    maxHeight: 300,
-                    overflowY: "auto",
-                    marginBottom: 12,
-                }}
-            >
+            <div className="messages-box">
                 {atendimento.mensagens.length === 0 && <p>Nenhuma mensagem ainda.</p>}
                 {atendimento.mensagens.map((mensagem) => (
                     <div
                         key={mensagem.id}
-                        style={{
-                            marginBottom: 8,
-                            textAlign: mensagem.remetente === "cliente" ? "left" : "right",
-                        }}
+                        className={`message-row ${
+                            mensagem.remetente === "cliente" ? "message-row--left" : "message-row--right"
+                        }`}
                     >
                         <span
-                            style={{
-                                display: "inline-block",
-                                padding: "6px 10px",
-                                borderRadius: 8,
-                                backgroundColor: mensagem.remetente === "cliente" ? "#f3f4f6" : "#dbeafe",
-                            }}
+                            className={`message-bubble ${
+                                mensagem.remetente === "cliente"
+                                    ? "message-bubble--cliente"
+                                    : "message-bubble--atendente"
+                            }`}
                         >
                             {mensagem.conteudo}
                         </span>
-                        <div style={{ fontSize: 11, color: "#888" }}>
+                        <div className="message-meta">
                             {mensagem.remetente} — {new Date(mensagem.criadoEm).toLocaleString()}
                         </div>
                     </div>
                 ))}
             </div>
 
-            <form onSubmit={enviarMensagem} style={{ display: "flex", gap: 8, marginBottom: 24 }}>
+            <form onSubmit={enviarMensagem} className="message-form">
                 <input
                     type="text"
                     value={novaMensagem}
                     onChange={(e) => setNovaMensagem(e.target.value)}
                     placeholder="Digite uma mensagem..."
-                    style={{ flex: 1, padding: 8 }}
+                    className="message-input"
                 />
                 <button type="submit" disabled={enviando}>
                     Enviar
@@ -237,15 +226,7 @@ export default function AtendimentoDetalhe() {
             {pedidos.length === 0 && <p>Nenhum pedido para este atendimento.</p>}
 
             {pedidos.map((pedido) => (
-                <div
-                    key={pedido.id}
-                    style={{
-                        border: "1px solid #ddd",
-                        borderRadius: 4,
-                        padding: 12,
-                        marginBottom: 12,
-                    }}
-                >
+                <div key={pedido.id} className="order-card">
                     <p>
                         <strong>Pedido #{pedido.id}</strong> — status: {pedido.status}
                     </p>
@@ -265,7 +246,7 @@ export default function AtendimentoDetalhe() {
                             <button
                                 key={proximoStatus}
                                 onClick={() => mudarStatusPedido(pedido.id, proximoStatus)}
-                                style={{ marginRight: 8 }}
+                                className="btn-spaced"
                             >
                                 Mudar para: {proximoStatus}
                             </button>
@@ -274,29 +255,21 @@ export default function AtendimentoDetalhe() {
                 </div>
             ))}
 
-            <button onClick={() => setMostrarFormPedido(!mostrarFormPedido)} style={{ marginBottom: 12 }}>
+            <button onClick={() => setMostrarFormPedido(!mostrarFormPedido)} className="btn-mb">
                 {mostrarFormPedido ? "Cancelar" : "+ Novo pedido"}
             </button>
 
             {mostrarFormPedido && (
-                <form
-                    onSubmit={criarPedido}
-                    style={{
-                        border: "1px solid #ddd",
-                        borderRadius: 4,
-                        padding: 12,
-                        marginBottom: 24,
-                    }}
-                >
+                <form onSubmit={criarPedido} className="order-form">
                     {itensNovoPedido.map((item, index) => (
-                        <div key={index} style={{ display: "flex", gap: 8, marginBottom: 8 }}>
+                        <div key={index} className="order-item-row">
                             <input
                                 type="text"
                                 placeholder="Descrição"
                                 value={item.descricao}
                                 onChange={(e) => atualizarItem(index, "descricao", e.target.value)}
                                 required
-                                style={{ flex: 2, padding: 6 }}
+                                className="order-item-desc"
                             />
                             <input
                                 type="number"
@@ -305,7 +278,7 @@ export default function AtendimentoDetalhe() {
                                 value={item.quantidade}
                                 onChange={(e) => atualizarItem(index, "quantidade", e.target.value)}
                                 required
-                                style={{ flex: 1, padding: 6 }}
+                                className="flex-1-padded"
                             />
                             <input
                                 type="number"
@@ -315,7 +288,7 @@ export default function AtendimentoDetalhe() {
                                 value={item.precoUnitario}
                                 onChange={(e) => atualizarItem(index, "precoUnitario", e.target.value)}
                                 required
-                                style={{ flex: 1, padding: 6 }}
+                                className="flex-1-padded"
                             />
                             {itensNovoPedido.length > 1 && (
                                 <button type="button" onClick={() => removerLinhaItem(index)}>
@@ -324,7 +297,7 @@ export default function AtendimentoDetalhe() {
                             )}
                         </div>
                     ))}
-                    <button type="button" onClick={adicionarLinhaItem} style={{ marginBottom: 12 }}>
+                    <button type="button" onClick={adicionarLinhaItem} className="btn-mb">
                         + Adicionar item
                     </button>
                     <div>
@@ -338,7 +311,7 @@ export default function AtendimentoDetalhe() {
             <h3>Histórico</h3>
             <ul>
                 {atendimento.historico.map((evento) => (
-                    <li key={evento.id} style={{ marginBottom: 4 }}>
+                    <li key={evento.id} className="history-item">
                         <strong>{new Date(evento.criadoEm).toLocaleString()}</strong> —{" "}
                         {evento.descricao}
                         {evento.usuario && ` (${evento.usuario.nome})`}

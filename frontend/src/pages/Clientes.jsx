@@ -83,32 +83,22 @@ export default function Clientes() {
     }
 
     return (
-        <div style={{ fontFamily: "sans-serif", padding: 20 }}>
+        <div className="page">
             <h2>Clientes</h2>
 
-            <button onClick={() => setMostrarFormNovo(!mostrarFormNovo)} style={{ marginBottom: 16 }}>
+            <button onClick={() => setMostrarFormNovo(!mostrarFormNovo)} className="btn-toggle">
                 {mostrarFormNovo ? "Cancelar" : "+ Novo cliente"}
             </button>
 
             {mostrarFormNovo && (
-                <form
-                    onSubmit={criarCliente}
-                    style={{
-                        display: "flex",
-                        gap: 8,
-                        marginBottom: 16,
-                        padding: 12,
-                        border: "1px solid #ddd",
-                        borderRadius: 4,
-                    }}
-                >
+                <form onSubmit={criarCliente} className="form-inline">
                     <input
                         type="text"
                         placeholder="Nome"
                         value={novoNome}
                         onChange={(e) => setNovoNome(e.target.value)}
                         required
-                        style={{ padding: 6 }}
+                        className="form-input"
                     />
                     <input
                         type="text"
@@ -116,7 +106,7 @@ export default function Clientes() {
                         value={novoTelefone}
                         onChange={(e) => setNovoTelefone(e.target.value)}
                         required
-                        style={{ padding: 6 }}
+                        className="form-input"
                     />
                     <button type="submit" disabled={salvandoNovo}>
                         Salvar
@@ -124,49 +114,49 @@ export default function Clientes() {
                 </form>
             )}
 
-            {erro && <p style={{ color: "red" }}>{erro}</p>}
+            {erro && <p className="error-text">{erro}</p>}
             {carregando && <p>Carregando...</p>}
 
-            <table style={{ width: "100%", borderCollapse: "collapse" }}>
+            <table className="data-table">
                 <thead>
-                    <tr style={{ textAlign: "left", borderBottom: "2px solid #ddd" }}>
-                        <th style={{ padding: 8 }}>ID</th>
-                        <th style={{ padding: 8 }}>Nome</th>
-                        <th style={{ padding: 8 }}>Telefone</th>
-                        <th style={{ padding: 8 }}>Ações</th>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>Telefone</th>
+                        <th>Ações</th>
                     </tr>
                 </thead>
                 <tbody>
                     {clientes.map((cliente) => (
-                        <tr key={cliente.id} style={{ borderBottom: "1px solid #eee" }}>
+                        <tr key={cliente.id}>
                             {editandoId === cliente.id ? (
                                 <>
-                                    <td style={{ padding: 8 }}>{cliente.id}</td>
-                                    <td style={{ padding: 8 }}>
+                                    <td>{cliente.id}</td>
+                                    <td>
                                         <input
                                             value={edicaoNome}
                                             onChange={(e) => setEdicaoNome(e.target.value)}
-                                            style={{ padding: 4 }}
+                                            className="edit-input"
                                         />
                                     </td>
-                                    <td style={{ padding: 8 }}>
+                                    <td>
                                         <input
                                             value={edicaoTelefone}
                                             onChange={(e) => setEdicaoTelefone(e.target.value)}
-                                            style={{ padding: 4 }}
+                                            className="edit-input"
                                         />
                                     </td>
-                                    <td style={{ padding: 8 }}>
+                                    <td>
                                         <button onClick={() => salvarEdicao(cliente.id)}>Salvar</button>{" "}
                                         <button onClick={cancelarEdicao}>Cancelar</button>
                                     </td>
                                 </>
                             ) : (
                                 <>
-                                    <td style={{ padding: 8 }}>{cliente.id}</td>
-                                    <td style={{ padding: 8 }}>{cliente.nome}</td>
-                                    <td style={{ padding: 8 }}>{cliente.telefone}</td>
-                                    <td style={{ padding: 8 }}>
+                                    <td>{cliente.id}</td>
+                                    <td>{cliente.nome}</td>
+                                    <td>{cliente.telefone}</td>
+                                    <td>
                                         <button onClick={() => iniciarEdicao(cliente)}>Editar</button>{" "}
                                         <button onClick={() => criarAtendimentoParaCliente(cliente.id)}>
                                             Novo atendimento

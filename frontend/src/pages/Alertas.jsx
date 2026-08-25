@@ -26,10 +26,10 @@ export default function Alertas() {
     }, []);
 
     return (
-        <div style={{ fontFamily: "sans-serif", padding: 20 }}>
+        <div className="page">
             <h2>Alertas</h2>
 
-            {erro && <p style={{ color: "red" }}>{erro}</p>}
+            {erro && <p className="error-text">{erro}</p>}
             {carregando && <p>Carregando...</p>}
 
             {!carregando && (
@@ -37,35 +37,27 @@ export default function Alertas() {
                     <h3>Sem responsável</h3>
                     {alertas.semResponsavel.length === 0 && <p>Nenhum atendimento sem responsável.</p>}
                     {alertas.semResponsavel.length > 0 && (
-                        <table style={{ width: "100%", borderCollapse: "collapse", marginBottom: 24 }}>
+                        <table className="data-table mb-24">
                             <thead>
-                                <tr style={{ textAlign: "left", borderBottom: "2px solid #ddd" }}>
-                                    <th style={{ padding: 8 }}>Atendimento</th>
-                                    <th style={{ padding: 8 }}>Cliente</th>
-                                    <th style={{ padding: 8 }}>Telefone</th>
-                                    <th style={{ padding: 8 }}>Minutos na fila</th>
+                                <tr>
+                                    <th>Atendimento</th>
+                                    <th>Cliente</th>
+                                    <th>Telefone</th>
+                                    <th>Minutos na fila</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {alertas.semResponsavel.map((alerta) => (
-                                    <tr key={alerta.atendimentoId} style={{ borderBottom: "1px solid #eee" }}>
-                                        <td style={{ padding: 8 }}>
+                                    <tr key={alerta.atendimentoId}>
+                                        <td>
                                             <Link to={`/atendimentos/${alerta.atendimentoId}`}>
                                                 #{alerta.atendimentoId}
                                             </Link>
                                         </td>
-                                        <td style={{ padding: 8 }}>{alerta.cliente?.nome}</td>
-                                        <td style={{ padding: 8 }}>{alerta.cliente?.telefone}</td>
-                                        <td style={{ padding: 8 }}>
-                                            <span
-                                                style={{
-                                                    color: "white",
-                                                    backgroundColor: "#ef4444",
-                                                    padding: "2px 8px",
-                                                    borderRadius: 4,
-                                                    fontSize: 12,
-                                                }}
-                                            >
+                                        <td>{alerta.cliente?.nome}</td>
+                                        <td>{alerta.cliente?.telefone}</td>
+                                        <td>
+                                            <span className="status-badge alert-badge-danger">
                                                 {alerta.minutosNaFila} min
                                             </span>
                                         </td>
@@ -78,35 +70,27 @@ export default function Alertas() {
                     <h3>Cliente aguardando resposta</h3>
                     {alertas.clienteAguardando.length === 0 && <p>Nenhum cliente aguardando resposta.</p>}
                     {alertas.clienteAguardando.length > 0 && (
-                        <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                        <table className="data-table">
                             <thead>
-                                <tr style={{ textAlign: "left", borderBottom: "2px solid #ddd" }}>
-                                    <th style={{ padding: 8 }}>Atendimento</th>
-                                    <th style={{ padding: 8 }}>Cliente</th>
-                                    <th style={{ padding: 8 }}>Atendente</th>
-                                    <th style={{ padding: 8 }}>Minutos sem resposta</th>
+                                <tr>
+                                    <th>Atendimento</th>
+                                    <th>Cliente</th>
+                                    <th>Atendente</th>
+                                    <th>Minutos sem resposta</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {alertas.clienteAguardando.map((alerta) => (
-                                    <tr key={alerta.atendimentoId} style={{ borderBottom: "1px solid #eee" }}>
-                                        <td style={{ padding: 8 }}>
+                                    <tr key={alerta.atendimentoId}>
+                                        <td>
                                             <Link to={`/atendimentos/${alerta.atendimentoId}`}>
                                                 #{alerta.atendimentoId}
                                             </Link>
                                         </td>
-                                        <td style={{ padding: 8 }}>{alerta.cliente?.nome}</td>
-                                        <td style={{ padding: 8 }}>{alerta.atendente?.nome || "-"}</td>
-                                        <td style={{ padding: 8 }}>
-                                            <span
-                                                style={{
-                                                    color: "white",
-                                                    backgroundColor: "#f59e0b",
-                                                    padding: "2px 8px",
-                                                    borderRadius: 4,
-                                                    fontSize: 12,
-                                                }}
-                                            >
+                                        <td>{alerta.cliente?.nome}</td>
+                                        <td>{alerta.atendente?.nome || "-"}</td>
+                                        <td>
+                                            <span className="status-badge alert-badge-warning">
                                                 {alerta.minutosSemResposta} min
                                             </span>
                                         </td>

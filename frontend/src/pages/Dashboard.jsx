@@ -22,50 +22,43 @@ export default function Dashboard() {
     }, []);
 
     if (carregando) {
-        return <p style={{ padding: 20 }}>Carregando...</p>;
+        return <p className="page-message">Carregando...</p>;
     }
 
     if (erro) {
-        return <p style={{ padding: 20, color: "red" }}>{erro}</p>;
+        return <p className="page-message error-text">{erro}</p>;
     }
 
-    const cardStyle = {
-        border: "1px solid #ddd",
-        borderRadius: 8,
-        padding: 16,
-        minWidth: 160,
-    };
-
     return (
-        <div style={{ fontFamily: "sans-serif", padding: 20 }}>
+        <div className="page">
             <h2>Dashboard</h2>
 
-            <div style={{ display: "flex", gap: 16, flexWrap: "wrap", marginBottom: 24 }}>
-                <div style={cardStyle}>
-                    <div style={{ fontSize: 28, fontWeight: "bold" }}>{metricas.totalAtendimentos}</div>
+            <div className="card-row">
+                <div className="card">
+                    <div className="card-value">{metricas.totalAtendimentos}</div>
                     <div>Total de atendimentos</div>
                 </div>
-                <div style={cardStyle}>
-                    <div style={{ fontSize: 28, fontWeight: "bold" }}>{metricas.porStatus.aguardando}</div>
+                <div className="card">
+                    <div className="card-value">{metricas.porStatus.aguardando}</div>
                     <div>Aguardando</div>
                 </div>
-                <div style={cardStyle}>
-                    <div style={{ fontSize: 28, fontWeight: "bold" }}>{metricas.porStatus.em_atendimento}</div>
+                <div className="card">
+                    <div className="card-value">{metricas.porStatus.em_atendimento}</div>
                     <div>Em atendimento</div>
                 </div>
-                <div style={cardStyle}>
-                    <div style={{ fontSize: 28, fontWeight: "bold" }}>{metricas.porStatus.resolvido}</div>
+                <div className="card">
+                    <div className="card-value">{metricas.porStatus.resolvido}</div>
                     <div>Resolvidos</div>
                 </div>
-                <div style={cardStyle}>
-                    <div style={{ fontSize: 28, fontWeight: "bold" }}>
+                <div className="card">
+                    <div className="card-value">
                         {metricas.tempoMedioAtendimentoMinutos ?? "-"}
                     </div>
                     <div>Tempo médio (min)</div>
                 </div>
             </div>
 
-            <div style={{ display: "flex", gap: 40, flexWrap: "wrap" }}>
+            <div className="stats-row">
                 <div>
                     <h3>Por funcionário</h3>
                     {metricas.atendimentosPorFuncionario.length === 0 && <p>Sem dados.</p>}

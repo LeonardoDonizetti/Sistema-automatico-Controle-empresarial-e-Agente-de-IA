@@ -112,33 +112,22 @@ export default function Usuarios() {
     }
 
     return (
-        <div style={{ fontFamily: "sans-serif", padding: 20 }}>
+        <div className="page">
             <h2>Usuários</h2>
 
-            <button onClick={() => setMostrarFormNovo(!mostrarFormNovo)} style={{ marginBottom: 16 }}>
+            <button onClick={() => setMostrarFormNovo(!mostrarFormNovo)} className="btn-toggle">
                 {mostrarFormNovo ? "Cancelar" : "+ Novo usuário"}
             </button>
 
             {mostrarFormNovo && (
-                <form
-                    onSubmit={criarUsuario}
-                    style={{
-                        display: "flex",
-                        gap: 8,
-                        marginBottom: 16,
-                        padding: 12,
-                        border: "1px solid #ddd",
-                        borderRadius: 4,
-                        flexWrap: "wrap",
-                    }}
-                >
+                <form onSubmit={criarUsuario} className="form-inline form-inline--wrap">
                     <input
                         type="text"
                         placeholder="Nome"
                         value={novoNome}
                         onChange={(e) => setNovoNome(e.target.value)}
                         required
-                        style={{ padding: 6 }}
+                        className="form-input"
                     />
                     <input
                         type="email"
@@ -146,7 +135,7 @@ export default function Usuarios() {
                         value={novoEmail}
                         onChange={(e) => setNovoEmail(e.target.value)}
                         required
-                        style={{ padding: 6 }}
+                        className="form-input"
                     />
                     <input
                         type="password"
@@ -155,9 +144,9 @@ export default function Usuarios() {
                         onChange={(e) => setNovaSenha(e.target.value)}
                         required
                         minLength={12}
-                        style={{ padding: 6 }}
+                        className="form-input"
                     />
-                    <select value={novoCargo} onChange={(e) => setNovoCargo(e.target.value)} style={{ padding: 6 }}>
+                    <select value={novoCargo} onChange={(e) => setNovoCargo(e.target.value)} className="form-input">
                         <option value="atendente">Atendente</option>
                         <option value="admin">Admin</option>
                     </select>
@@ -167,62 +156,62 @@ export default function Usuarios() {
                 </form>
             )}
 
-            {erro && <p style={{ color: "red" }}>{erro}</p>}
+            {erro && <p className="error-text">{erro}</p>}
             {carregando && <p>Carregando...</p>}
 
-            <table style={{ width: "100%", borderCollapse: "collapse" }}>
+            <table className="data-table">
                 <thead>
-                    <tr style={{ textAlign: "left", borderBottom: "2px solid #ddd" }}>
-                        <th style={{ padding: 8 }}>ID</th>
-                        <th style={{ padding: 8 }}>Nome</th>
-                        <th style={{ padding: 8 }}>E-mail</th>
-                        <th style={{ padding: 8 }}>Cargo</th>
-                        <th style={{ padding: 8 }}>Status</th>
-                        <th style={{ padding: 8 }}>Ações</th>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>E-mail</th>
+                        <th>Cargo</th>
+                        <th>Status</th>
+                        <th>Ações</th>
                     </tr>
                 </thead>
                 <tbody>
                     {usuarios.map((usuario) => (
-                        <tr key={usuario.id} style={{ borderBottom: "1px solid #eee" }}>
+                        <tr key={usuario.id}>
                             {editandoId === usuario.id ? (
                                 <>
-                                    <td style={{ padding: 8 }}>{usuario.id}</td>
-                                    <td style={{ padding: 8 }}>
+                                    <td>{usuario.id}</td>
+                                    <td>
                                         <input
                                             value={edicaoNome}
                                             onChange={(e) => setEdicaoNome(e.target.value)}
-                                            style={{ padding: 4 }}
+                                            className="edit-input"
                                         />
                                     </td>
-                                    <td style={{ padding: 8 }}>{usuario.email}</td>
-                                    <td style={{ padding: 8 }}>
+                                    <td>{usuario.email}</td>
+                                    <td>
                                         <select
                                             value={edicaoCargo}
                                             onChange={(e) => setEdicaoCargo(e.target.value)}
-                                            style={{ padding: 4 }}
+                                            className="edit-input"
                                         >
                                             <option value="atendente">Atendente</option>
                                             <option value="admin">Admin</option>
                                         </select>
                                     </td>
-                                    <td style={{ padding: 8 }}>
+                                    <td>
                                         <select
                                             value={edicaoAtivo ? "ativo" : "inativo"}
                                             onChange={(e) => setEdicaoAtivo(e.target.value === "ativo")}
-                                            style={{ padding: 4 }}
+                                            className="edit-input"
                                         >
                                             <option value="ativo">Ativo</option>
                                             <option value="inativo">Inativo</option>
                                         </select>
                                     </td>
-                                    <td style={{ padding: 8 }}>
+                                    <td>
                                         <input
                                             type="password"
                                             placeholder="Nova senha (opcional)"
                                             value={edicaoSenha}
                                             onChange={(e) => setEdicaoSenha(e.target.value)}
                                             minLength={12}
-                                            style={{ padding: 4, marginBottom: 4, display: "block" }}
+                                            className="edit-input-block"
                                         />
                                         <button onClick={() => salvarEdicao(usuario.id)}>Salvar</button>{" "}
                                         <button onClick={cancelarEdicao}>Cancelar</button>
@@ -230,24 +219,16 @@ export default function Usuarios() {
                                 </>
                             ) : (
                                 <>
-                                    <td style={{ padding: 8 }}>{usuario.id}</td>
-                                    <td style={{ padding: 8 }}>{usuario.nome}</td>
-                                    <td style={{ padding: 8 }}>{usuario.email}</td>
-                                    <td style={{ padding: 8 }}>{usuario.cargo}</td>
-                                    <td style={{ padding: 8 }}>
-                                        <span
-                                            style={{
-                                                color: "white",
-                                                backgroundColor: usuario.ativo ? "#10b981" : "#6b7280",
-                                                padding: "2px 8px",
-                                                borderRadius: 4,
-                                                fontSize: 12,
-                                            }}
-                                        >
+                                    <td>{usuario.id}</td>
+                                    <td>{usuario.nome}</td>
+                                    <td>{usuario.email}</td>
+                                    <td>{usuario.cargo}</td>
+                                    <td>
+                                        <span className={`status-badge status-${usuario.ativo ? "ativo" : "inativo"}`}>
                                             {usuario.ativo ? "ativo" : "inativo"}
                                         </span>
                                     </td>
-                                    <td style={{ padding: 8 }}>
+                                    <td>
                                         <button onClick={() => iniciarEdicao(usuario)}>Editar</button>{" "}
                                         {usuario.ativo && usuario.id !== usuarioLogado?.id && (
                                             <button onClick={() => inativarUsuario(usuario.id)}>Inativar</button>

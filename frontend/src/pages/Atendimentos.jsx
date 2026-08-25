@@ -2,13 +2,6 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../services/api";
 
-const CORES_STATUS = {
-    aguardando: "#f59e0b",
-    em_atendimento: "#3b82f6",
-    resolvido: "#10b981",
-    fechado: "#6b7280",
-};
-
 export default function Atendimentos() {
     const [atendimentos, setAtendimentos] = useState([]);
     const [carregando, setCarregando] = useState(true);
@@ -47,10 +40,10 @@ export default function Atendimentos() {
     }
 
     return (
-        <div style={{ fontFamily: "sans-serif", padding: 20 }}>
+        <div className="page">
             <h2>Central de Atendimentos</h2>
 
-            <div style={{ marginBottom: 16 }}>
+            <div className="filter-row">
                 <label>Filtrar por status: </label>
                 <select value={filtroStatus} onChange={(e) => setFiltroStatus(e.target.value)}>
                     <option value="">Todos</option>
@@ -61,49 +54,41 @@ export default function Atendimentos() {
                 </select>
             </div>
 
-            {erro && <p style={{ color: "red" }}>{erro}</p>}
+            {erro && <p className="error-text">{erro}</p>}
             {carregando && <p>Carregando...</p>}
 
             {!carregando && atendimentos.length === 0 && <p>Nenhum atendimento encontrado.</p>}
 
-            <table style={{ width: "100%", borderCollapse: "collapse" }}>
+            <table className="data-table">
                 <thead>
-                    <tr style={{ textAlign: "left", borderBottom: "2px solid #ddd" }}>
-                        <th style={{ padding: 8 }}>ID</th>
-                        <th style={{ padding: 8 }}>Cliente</th>
-                        <th style={{ padding: 8 }}>Setor</th>
-                        <th style={{ padding: 8 }}>Status</th>
-                        <th style={{ padding: 8 }}>Atendente</th>
-                        <th style={{ padding: 8 }}>Ação</th>
+                    <tr>
+                        <th>ID</th>
+                        <th>Cliente</th>
+                        <th>Setor</th>
+                        <th>Status</th>
+                        <th>Atendente</th>
+                        <th>Ação</th>
                     </tr>
                 </thead>
                 <tbody>
                     {atendimentos.map((atendimento) => (
-                        <tr key={atendimento.id} style={{ borderBottom: "1px solid #eee" }}>
-                            <td style={{ padding: 8 }}>
+                        <tr key={atendimento.id}>
+                            <td>
                                 <Link to={`/atendimentos/${atendimento.id}`}>{atendimento.id}</Link>
                             </td>
-                            <td style={{ padding: 8 }}>
+                            <td>
                                 <Link to={`/atendimentos/${atendimento.id}`}>
                                     {atendimento.cliente?.nome}
                                 </Link>
                             </td>
-                            <td style={{ padding: 8 }}>{atendimento.setor || "-"}</td>
-                            <td style={{ padding: 8 }}>
-                                <span
-                                    style={{
-                                        color: "white",
-                                        backgroundColor: CORES_STATUS[atendimento.status],
-                                        padding: "2px 8px",
-                                        borderRadius: 4,
-                                        fontSize: 12,
-                                    }}
-                                >
+                            <td>{atendimento.setor || "-"}</td>
+                            <td>
+                                <span className={`status-badge status-${atendimento.status}`}>
                                     {atendimento.status}
                                 </span>
                             </td>
-                            <td style={{ padding: 8 }}>{atendimento.atendente?.nome || "-"}</td>
-                            <td style={{ padding: 8 }}>
+                            <td>{atendimento.atendente?.nome || "-"}</td>
+                            <td>
                                 {!atendimento.atendenteId && (
                                     <button onClick={(e) => assumirAtendimento(atendimento.id, e)}>
                                         Assumir
