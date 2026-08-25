@@ -23,9 +23,21 @@ react-router-dom, em /frontend.
 10. Pedidos (itens em centavos, cálculo de total dinâmico)
 11. Dashboard backend (métricas)
 
-Frontend em andamento: Login, Dashboard, Central de Atendimentos (lista +
-detalhe + mensagens + histórico + pedidos), Clientes. Faltam: tela de Usuários,
-tela de Pedidos standalone (hoje só existe dentro do detalhe do atendimento).
+Revisão de segurança completa: 8/8 itens corrigidos e testados (middleware
+de erro central, rate limit dedicado no login, timing attack no login,
+restrição de transferência de atendimento, dashboard restrito a admin,
+algoritmo JWT travado, paginação nas listagens, CORS/validações/404
+handler).
+
+Suíte de testes automatizados completa (Fase 20): 45 testes, Jest +
+Supertest, banco de teste separado (sistema_atendimento_test via
+.env.test), cobrindo autenticação, usuários/autorização, clientes,
+atendimentos, mensagens, pedidos, alertas e dashboard.
+
+Frontend: Login, Dashboard, Central de Atendimentos (lista + detalhe +
+mensagens + histórico + pedidos), Clientes, Usuários, Pedidos standalone,
+Alertas, modo claro/escuro (CSS compartilhado em
+frontend/src/styles/paginas.css).
 
 ## Regras de trabalho
 - NUNCA reescreva um arquivo inteiro quando uma edição pontual resolve.
@@ -58,11 +70,10 @@ Nunca coloque senha, DATABASE_URL, JWT_SECRET ou token completo na resposta.
 .env nunca vai pro Git (já está no .gitignore).
 
 ## Backlog conhecido (não fazer sem eu pedir)
-- Trocar DATABASE_URL e JWT_SECRET (foram expostos numa sessão de chat antiga,
-  pendente até hoje).
-- Tela de Usuários no frontend.
-- Fases 13+ do roadmap original (WhatsApp, IA, testes, produção) — não começar
-  sem eu pedir explicitamente.
+- Bug das linhas divisórias da tabela no modo claro (.data-table tbody tr).
+- Fases seguintes do roadmap original (WhatsApp, IA, produção) — decisão
+  sobre WhatsApp fica só para o final do projeto; não começar sem eu pedir
+  explicitamente.
 
 ## Git
 Depois de CADA alteração de código que eu aprovar (arquivo criado, editado, ou
