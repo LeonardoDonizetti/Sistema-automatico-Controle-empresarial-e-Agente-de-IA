@@ -50,6 +50,9 @@ async function listarAtendimentos(req, res) {
         const where = {};
 
         if (setor) {
+            if (typeof setor !== "string" || setor.length > 100) {
+                return res.status(400).json({ erro: "setor inválido para filtro." });
+            }
             where.setor = setor;
         }
 

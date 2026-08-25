@@ -3,15 +3,25 @@ const { z } = require("zod");
 const prisma = require("../config/prisma");
 const { parsePaginacao, metaPaginacao } = require("../utils/paginacao");
 
+// Aceita telefone brasileiro com ou sem DDD, com ou sem 9º dígito, com/sem
+// formatação comum: (11) 91234-5678, 11 91234-5678, 1112345678, 91234-5678, etc.
+const REGEX_TELEFONE_BR = /^(?:\+?55\s?)?(?:\(?\d{2}\)?\s?)?(?:9\s?)?\d{4}-?\s?\d{4}$/;
+
 const criarClienteSchema = z.object({
     nome: z.string().trim().min(1).max(150),
-    telefone: z.string().trim().min(8).max(20),
+    telefone: z.string().trim().min(8).max(20).regex(REGEX_TELEFONE_BR, "Telefone inválido."),
 });
 
 const atualizarClienteSchema = z
     .object({
         nome: z.string().trim().min(1).max(150).optional(),
-        telefone: z.string().trim().min(8).max(20).optional(),
+        telefone: z
+            .string()
+            .trim()
+            .min(8)
+            .max(20)
+            .regex(REGEX_TELEFONE_BR, "Telefone inválido.")
+            .optional(),
     })
     .refine((dados) => Object.keys(dados).length > 0, {
         message: "Nenhum campo válido para atualizar.",

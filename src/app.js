@@ -19,11 +19,15 @@ app.disable("x-powered-by");
 // Headers básicos de segurança
 app.use(helmet());
 
-// CORS para desenvolvimento local
+// CORS: origens permitidas vêm do .env (CORS_ORIGINS, separadas por vírgula)
+const origensPermitidas = (process.env.CORS_ORIGINS || "")
+    .split(",")
+    .map((origem) => origem.trim())
+    .filter(Boolean);
+
 app.use(
     cors({
-        origin: ["http://localhost:3000", "http://localhost:5173"],
-        credentials: true,
+        origin: origensPermitidas,
     })
 );
 
@@ -58,6 +62,11 @@ app.get("/api/health", (req, res) => {
     res.json({
         status: "ok",
     });
+});
+
+// Rota não encontrada: qualquer método/caminho que não bateu em nenhuma rota acima
+app.use((req, res) => {
+    res.status(404).json({ erro: "Rota não encontrada." });
 });
 
 // Middleware de erro central: captura qualquer erro não tratado

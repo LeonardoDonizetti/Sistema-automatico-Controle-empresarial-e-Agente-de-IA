@@ -96,6 +96,15 @@ async function volumePorPeriodo(req, res) {
             return res.status(400).json({ erro: "Datas inválidas." });
         }
 
+        const umAnoAposInicio = new Date(inicio);
+        umAnoAposInicio.setFullYear(umAnoAposInicio.getFullYear() + 1);
+
+        if (fim > umAnoAposInicio) {
+            return res.status(400).json({
+                erro: "O intervalo entre dataInicio e dataFim não pode ser maior que 1 ano.",
+            });
+        }
+
         fim.setHours(23, 59, 59, 999);
 
         const atendimentos = await prisma.conversa.findMany({
