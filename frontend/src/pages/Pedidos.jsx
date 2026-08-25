@@ -1,21 +1,25 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../services/api";
+import Paginacao from "../components/Paginacao";
 
 export default function Pedidos() {
     const [pedidos, setPedidos] = useState([]);
     const [carregando, setCarregando] = useState(true);
     const [erro, setErro] = useState("");
     const [filtroStatus, setFiltroStatus] = useState("");
+    const [pagina, setPagina] = useState(1);
+    const [totalPaginas, setTotalPaginas] = useState(1);
 
     async function carregarPedidos() {
         setCarregando(true);
         setErro("");
 
         try {
-            const query = filtroStatus ? `?status=${filtroStatus}` : "";
-            const resposta = await api.get(`/pedidos${query}`);
+            const filtro = filtroStatus ? `&status=${filtroStatus}` : "";
+            const resposta = await api.get(`/pedidos?pagina=${pagina}${filtro}`);
             setPedidos(resposta.pedidos);
+            setTotalPaginas(resposta.paginacao.totalPaginas);
         } catch (error) {
             setErro(error.message);
         } finally {
@@ -25,7 +29,12 @@ export default function Pedidos() {
 
     useEffect(() => {
         carregarPedidos();
-    }, [filtroStatus]);
+    }, [filtroStatus, pagina]);
+
+    function alterarFiltroStatus(valor) {
+        setPagina(1);
+        setFiltroStatus(valor);
+    }
 
     return (
         <div className="page">
@@ -33,7 +42,7 @@ export default function Pedidos() {
 
             <div className="filter-row">
                 <label>Filtrar por status: </label>
-                <select value={filtroStatus} onChange={(e) => setFiltroStatus(e.target.value)}>
+                <select value={filtroStatus} onChange={(e) => alterarFiltroStatus(e.target.value)}>
                     <option value="">Todos</option>
                     <option value="orcamento">Orçamento</option>
                     <option value="aguardando_aprovacao">Aguardando aprovação</option>
@@ -81,6 +90,8 @@ export default function Pedidos() {
                     ))}
                 </tbody>
             </table>
+
+            <Paginacao pagina={pagina} totalPaginas={totalPaginas} setPagina={setPagina} />
         </div>
     );
 }

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../services/api";
+import Paginacao from "../components/Paginacao";
 
 export default function Clientes() {
     const navigate = useNavigate();
@@ -8,6 +9,8 @@ export default function Clientes() {
     const [clientes, setClientes] = useState([]);
     const [carregando, setCarregando] = useState(true);
     const [erro, setErro] = useState("");
+    const [pagina, setPagina] = useState(1);
+    const [totalPaginas, setTotalPaginas] = useState(1);
 
     const [mostrarFormNovo, setMostrarFormNovo] = useState(false);
     const [novoNome, setNovoNome] = useState("");
@@ -23,8 +26,9 @@ export default function Clientes() {
         setErro("");
 
         try {
-            const resposta = await api.get("/clientes");
+            const resposta = await api.get(`/clientes?pagina=${pagina}`);
             setClientes(resposta.clientes);
+            setTotalPaginas(resposta.paginacao.totalPaginas);
         } catch (error) {
             setErro(error.message);
         } finally {
@@ -34,7 +38,7 @@ export default function Clientes() {
 
     useEffect(() => {
         carregarClientes();
-    }, []);
+    }, [pagina]);
 
     async function criarCliente(evento) {
         evento.preventDefault();
@@ -168,6 +172,8 @@ export default function Clientes() {
                     ))}
                 </tbody>
             </table>
+
+            <Paginacao pagina={pagina} totalPaginas={totalPaginas} setPagina={setPagina} />
         </div>
     );
 }

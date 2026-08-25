@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { api } from "../services/api";
+import CampoSenha from "../components/CampoSenha";
 
 export default function Login({ aoLogar }) {
     const [email, setEmail] = useState("");
@@ -40,8 +41,7 @@ export default function Login({ aoLogar }) {
                 </div>
                 <div className="form-group">
                     <label>Senha</label>
-                    <input
-                        type="password"
+                    <CampoSenha
                         value={senha}
                         onChange={(e) => setSenha(e.target.value)}
                         required

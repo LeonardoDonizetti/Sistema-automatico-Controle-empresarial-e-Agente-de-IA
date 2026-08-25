@@ -1,21 +1,25 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../services/api";
+import Paginacao from "../components/Paginacao";
 
 export default function Atendimentos() {
     const [atendimentos, setAtendimentos] = useState([]);
     const [carregando, setCarregando] = useState(true);
     const [erro, setErro] = useState("");
     const [filtroStatus, setFiltroStatus] = useState("");
+    const [pagina, setPagina] = useState(1);
+    const [totalPaginas, setTotalPaginas] = useState(1);
 
     async function carregarAtendimentos() {
         setCarregando(true);
         setErro("");
 
         try {
-            const query = filtroStatus ? `?status=${filtroStatus}` : "";
-            const resposta = await api.get(`/atendimentos${query}`);
+            const filtro = filtroStatus ? `&status=${filtroStatus}` : "";
+            const resposta = await api.get(`/atendimentos?pagina=${pagina}${filtro}`);
             setAtendimentos(resposta.atendimentos);
+            setTotalPaginas(resposta.paginacao.totalPaginas);
         } catch (error) {
             setErro(error.message);
         } finally {
@@ -25,7 +29,12 @@ export default function Atendimentos() {
 
     useEffect(() => {
         carregarAtendimentos();
-    }, [filtroStatus]);
+    }, [filtroStatus, pagina]);
+
+    function alterarFiltroStatus(valor) {
+        setPagina(1);
+        setFiltroStatus(valor);
+    }
 
     async function assumirAtendimento(id, evento) {
         evento.preventDefault();
@@ -45,7 +54,7 @@ export default function Atendimentos() {
 
             <div className="filter-row">
                 <label>Filtrar por status: </label>
-                <select value={filtroStatus} onChange={(e) => setFiltroStatus(e.target.value)}>
+                <select value={filtroStatus} onChange={(e) => alterarFiltroStatus(e.target.value)}>
                     <option value="">Todos</option>
                     <option value="aguardando">Aguardando</option>
                     <option value="em_atendimento">Em atendimento</option>
@@ -99,6 +108,8 @@ export default function Atendimentos() {
                     ))}
                 </tbody>
             </table>
+
+            <Paginacao pagina={pagina} totalPaginas={totalPaginas} setPagina={setPagina} />
         </div>
     );
 }

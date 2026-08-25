@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { api } from "../services/api";
+import CampoSenha from "../components/CampoSenha";
+import Paginacao from "../components/Paginacao";
 
 export default function Usuarios() {
     const usuarioLogado = (() => {
@@ -10,6 +12,8 @@ export default function Usuarios() {
     const [usuarios, setUsuarios] = useState([]);
     const [carregando, setCarregando] = useState(true);
     const [erro, setErro] = useState("");
+    const [pagina, setPagina] = useState(1);
+    const [totalPaginas, setTotalPaginas] = useState(1);
 
     const [mostrarFormNovo, setMostrarFormNovo] = useState(false);
     const [novoNome, setNovoNome] = useState("");
@@ -29,8 +33,9 @@ export default function Usuarios() {
         setErro("");
 
         try {
-            const resposta = await api.get("/usuarios");
+            const resposta = await api.get(`/usuarios?pagina=${pagina}`);
             setUsuarios(resposta.usuarios);
+            setTotalPaginas(resposta.paginacao.totalPaginas);
         } catch (error) {
             setErro(error.message);
         } finally {
@@ -40,7 +45,7 @@ export default function Usuarios() {
 
     useEffect(() => {
         carregarUsuarios();
-    }, []);
+    }, [pagina]);
 
     async function criarUsuario(evento) {
         evento.preventDefault();
@@ -137,8 +142,7 @@ export default function Usuarios() {
                         required
                         className="form-input"
                     />
-                    <input
-                        type="password"
+                    <CampoSenha
                         placeholder="Senha (mín. 12 caracteres)"
                         value={novaSenha}
                         onChange={(e) => setNovaSenha(e.target.value)}
@@ -205,8 +209,7 @@ export default function Usuarios() {
                                         </select>
                                     </td>
                                     <td>
-                                        <input
-                                            type="password"
+                                        <CampoSenha
                                             placeholder="Nova senha (opcional)"
                                             value={edicaoSenha}
                                             onChange={(e) => setEdicaoSenha(e.target.value)}
@@ -240,6 +243,8 @@ export default function Usuarios() {
                     ))}
                 </tbody>
             </table>
+
+            <Paginacao pagina={pagina} totalPaginas={totalPaginas} setPagina={setPagina} />
         </div>
     );
 }

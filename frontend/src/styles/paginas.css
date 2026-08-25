@@ -164,6 +164,27 @@
     box-sizing: border-box;
 }
 
+.campo-senha {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.campo-senha > input {
+    flex: 1;
+    min-width: 0;
+}
+
+.botao-mostrar-senha {
+    padding: 4px 8px;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.paginacao-row {
+    margin-top: 16px;
+}
+
 .btn-block {
     width: 100%;
     padding: 10px;
