@@ -1,4 +1,5 @@
 const rateLimit = require("express-rate-limit");
+const { ipKeyGenerator } = rateLimit;
 
 // Limite mais rígido específico para tentativas de login (força bruta)
 const loginRateLimiter = rateLimit({
@@ -7,12 +8,7 @@ const loginRateLimiter = rateLimit({
     standardHeaders: "draft-7",
     legacyHeaders: false,
     message: { erro: "Muitas tentativas de login. Tente novamente mais tarde." },
-    // TEMPORÁRIO: log de diagnóstico para investigar por que o rate limit
-    // dedicado do login não está bloqueando em produção. Remover depois do teste.
-    keyGenerator: (req) => {
-        console.log("[loginRateLimiter] IP identificado:", req.ip);
-        return req.ip;
-    },
+    keyGenerator: (req) => ipKeyGenerator(req.ip),
 });
 
 module.exports = loginRateLimiter;
