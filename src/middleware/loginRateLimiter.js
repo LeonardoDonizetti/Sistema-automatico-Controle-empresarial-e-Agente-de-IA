@@ -8,7 +8,16 @@ const loginRateLimiter = rateLimit({
     standardHeaders: "draft-7",
     legacyHeaders: false,
     message: { erro: "Muitas tentativas de login. Tente novamente mais tarde." },
-    keyGenerator: (req) => ipKeyGenerator(req.ip),
+    // TEMPORÁRIO: log de diagnóstico para investigar rate limit inconsistente
+    // em produção. Remover depois do teste.
+    keyGenerator: (req) => {
+        console.log("[loginRateLimiter] diagnostico:", {
+            reqIp: req.ip,
+            xForwardedFor: req.headers["x-forwarded-for"],
+            socketRemoteAddress: req.socket.remoteAddress,
+        });
+        return ipKeyGenerator(req.ip);
+    },
 });
 
 module.exports = loginRateLimiter;
