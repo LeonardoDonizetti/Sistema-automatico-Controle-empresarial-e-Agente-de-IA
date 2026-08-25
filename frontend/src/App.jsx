@@ -4,6 +4,7 @@ import Login from "./pages/Login";
 import Atendimentos from "./pages/Atendimentos";
 import AtendimentoDetalhe from "./pages/AtendimentoDetalhe";
 import Clientes from "./pages/Clientes";
+import Usuarios from "./pages/Usuarios";
 import Dashboard from "./pages/Dashboard";
 
 function App() {
@@ -53,6 +54,11 @@ function App() {
                         <NavLink to="/clientes" style={linkStyle}>
                             Clientes
                         </NavLink>
+                        {usuario.cargo === "admin" && (
+                            <NavLink to="/usuarios" style={linkStyle}>
+                                Usuários
+                            </NavLink>
+                        )}
                     </nav>
                 </div>
                 <div>
@@ -67,6 +73,7 @@ function App() {
                 <Route path="/atendimentos" element={<Atendimentos />} />
                 <Route path="/atendimentos/:id" element={<AtendimentoDetalhe />} />
                 <Route path="/clientes" element={<Clientes />} />
+                <Route path="/usuarios" element={<Usuarios />} />
             </Routes>
         </div>
     );
