@@ -47,9 +47,11 @@ function App() {
                 <div style={{ display: "flex", alignItems: "center" }}>
                     <strong style={{ marginRight: 24 }}>Sistema de Atendimento</strong>
                     <nav>
-                        <NavLink to="/dashboard" style={linkStyle}>
-                            Dashboard
-                        </NavLink>
+                        {usuario.cargo === "admin" && (
+                            <NavLink to="/dashboard" style={linkStyle}>
+                                Dashboard
+                            </NavLink>
+                        )}
                         <NavLink to="/atendimentos" style={linkStyle}>
                             Atendimentos
                         </NavLink>
