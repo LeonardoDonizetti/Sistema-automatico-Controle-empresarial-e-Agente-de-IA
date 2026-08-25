@@ -9,6 +9,15 @@ const TRANSICOES = {
     fechado: [],
 };
 
+const TRANSICOES_PEDIDO = {
+    orcamento: ["aguardando_aprovacao"],
+    aguardando_aprovacao: ["aprovado", "orcamento"],
+    aprovado: ["em_producao"],
+    em_producao: ["pronto"],
+    pronto: ["entregue"],
+    entregue: [],
+};
+
 export default function AtendimentoDetalhe() {
     const { id } = useParams();
     const [atendimento, setAtendimento] = useState(null);
@@ -16,6 +25,13 @@ export default function AtendimentoDetalhe() {
     const [erro, setErro] = useState("");
     const [novaMensagem, setNovaMensagem] = useState("");
     const [enviando, setEnviando] = useState(false);
+
+    const [pedidos, setPedidos] = useState([]);
+    const [mostrarFormPedido, setMostrarFormPedido] = useState(false);
+    const [itensNovoPedido, setItensNovoPedido] = useState([
+        { descricao: "", quantidade: 1, precoUnitario: "" },
+    ]);
+    const [salvandoPedido, setSalvandoPedido] = useState(false);
 
     async function carregar() {
         setCarregando(true);
@@ -31,8 +47,18 @@ export default function AtendimentoDetalhe() {
         }
     }
 
+    async function carregarPedidos() {
+        try {
+            const resposta = await api.get(`/pedidos?atendimentoId=${id}`);
+            setPedidos(resposta.pedidos);
+        } catch (error) {
+            console.error(error.message);
+        }
+    }
+
     useEffect(() => {
         carregar();
+        carregarPedidos();
     }, [id]);
 
     async function mudarStatus(novoStatus) {
@@ -64,6 +90,52 @@ export default function AtendimentoDetalhe() {
             alert(error.message);
         } finally {
             setEnviando(false);
+        }
+    }
+
+    function atualizarItem(index, campo, valor) {
+        const novosItens = [...itensNovoPedido];
+        novosItens[index][campo] = valor;
+        setItensNovoPedido(novosItens);
+    }
+
+    function adicionarLinhaItem() {
+        setItensNovoPedido([...itensNovoPedido, { descricao: "", quantidade: 1, precoUnitario: "" }]);
+    }
+
+    function removerLinhaItem(index) {
+        setItensNovoPedido(itensNovoPedido.filter((_, i) => i !== index));
+    }
+
+    async function criarPedido(evento) {
+        evento.preventDefault();
+        setSalvandoPedido(true);
+
+        try {
+            const itens = itensNovoPedido.map((item) => ({
+                descricao: item.descricao,
+                quantidade: Number(item.quantidade),
+                precoUnitario: Number(item.precoUnitario),
+            }));
+
+            await api.post("/pedidos", { atendimentoId: Number(id), itens });
+
+            setItensNovoPedido([{ descricao: "", quantidade: 1, precoUnitario: "" }]);
+            setMostrarFormPedido(false);
+            carregarPedidos();
+        } catch (error) {
+            alert(error.message);
+        } finally {
+            setSalvandoPedido(false);
+        }
+    }
+
+    async function mudarStatusPedido(pedidoId, novoStatus) {
+        try {
+            await api.patch(`/pedidos/${pedidoId}`, { status: novoStatus });
+            carregarPedidos();
+        } catch (error) {
+            alert(error.message);
         }
     }
 
@@ -159,6 +231,109 @@ export default function AtendimentoDetalhe() {
                     Enviar
                 </button>
             </form>
+
+            <h3>Pedidos</h3>
+
+            {pedidos.length === 0 && <p>Nenhum pedido para este atendimento.</p>}
+
+            {pedidos.map((pedido) => (
+                <div
+                    key={pedido.id}
+                    style={{
+                        border: "1px solid #ddd",
+                        borderRadius: 4,
+                        padding: 12,
+                        marginBottom: 12,
+                    }}
+                >
+                    <p>
+                        <strong>Pedido #{pedido.id}</strong> — status: {pedido.status}
+                    </p>
+                    <ul>
+                        {pedido.itens.map((item) => (
+                            <li key={item.id}>
+                                {item.quantidade}x {item.descricao} — R$ {item.precoUnitario.toFixed(2)} (subtotal: R${" "}
+                                {item.subtotal.toFixed(2)})
+                            </li>
+                        ))}
+                    </ul>
+                    <p>
+                        <strong>Total: R$ {pedido.valorTotal.toFixed(2)}</strong>
+                    </p>
+                    <div>
+                        {TRANSICOES_PEDIDO[pedido.status].map((proximoStatus) => (
+                            <button
+                                key={proximoStatus}
+                                onClick={() => mudarStatusPedido(pedido.id, proximoStatus)}
+                                style={{ marginRight: 8 }}
+                            >
+                                Mudar para: {proximoStatus}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            ))}
+
+            <button onClick={() => setMostrarFormPedido(!mostrarFormPedido)} style={{ marginBottom: 12 }}>
+                {mostrarFormPedido ? "Cancelar" : "+ Novo pedido"}
+            </button>
+
+            {mostrarFormPedido && (
+                <form
+                    onSubmit={criarPedido}
+                    style={{
+                        border: "1px solid #ddd",
+                        borderRadius: 4,
+                        padding: 12,
+                        marginBottom: 24,
+                    }}
+                >
+                    {itensNovoPedido.map((item, index) => (
+                        <div key={index} style={{ display: "flex", gap: 8, marginBottom: 8 }}>
+                            <input
+                                type="text"
+                                placeholder="Descrição"
+                                value={item.descricao}
+                                onChange={(e) => atualizarItem(index, "descricao", e.target.value)}
+                                required
+                                style={{ flex: 2, padding: 6 }}
+                            />
+                            <input
+                                type="number"
+                                placeholder="Qtd"
+                                min="1"
+                                value={item.quantidade}
+                                onChange={(e) => atualizarItem(index, "quantidade", e.target.value)}
+                                required
+                                style={{ flex: 1, padding: 6 }}
+                            />
+                            <input
+                                type="number"
+                                placeholder="Preço unitário"
+                                min="0.01"
+                                step="0.01"
+                                value={item.precoUnitario}
+                                onChange={(e) => atualizarItem(index, "precoUnitario", e.target.value)}
+                                required
+                                style={{ flex: 1, padding: 6 }}
+                            />
+                            {itensNovoPedido.length > 1 && (
+                                <button type="button" onClick={() => removerLinhaItem(index)}>
+                                    Remover
+                                </button>
+                            )}
+                        </div>
+                    ))}
+                    <button type="button" onClick={adicionarLinhaItem} style={{ marginBottom: 12 }}>
+                        + Adicionar item
+                    </button>
+                    <div>
+                        <button type="submit" disabled={salvandoPedido}>
+                            Criar pedido
+                        </button>
+                    </div>
+                </form>
+            )}
 
             <h3>Histórico</h3>
             <ul>
