@@ -1,3 +1,50 @@
+:root {
+    color-scheme: light;
+
+    --tema-bg: #ffffff;
+    --tema-texto: #111827;
+    --tema-texto-titulo: #111827;
+    --tema-borda: #ddd;
+
+    --tema-borda-suave: #eee;
+    --tema-texto-suave: #6b7280;
+    --tema-link: #555;
+    --tema-link-ativo: #111;
+    --tema-bolha-cliente: #f3f4f6;
+    --tema-bolha-atendente: #dbeafe;
+}
+
+:root[data-theme="dark"] {
+    color-scheme: dark;
+
+    --tema-bg: #16171d;
+    --tema-texto: #d1d5db;
+    --tema-texto-titulo: #f3f4f6;
+    --tema-borda: #383a45;
+
+    --tema-borda-suave: #2b2d36;
+    --tema-texto-suave: #9ca3af;
+    --tema-link: #9ca3af;
+    --tema-link-ativo: #f3f4f6;
+    --tema-bolha-cliente: #262832;
+    --tema-bolha-atendente: #1e3a5f;
+}
+
+body {
+    background-color: var(--tema-bg);
+    color: var(--tema-texto);
+}
+
+h1,
+h2 {
+    color: var(--tema-texto-titulo);
+}
+
+.btn-tema {
+    font-size: 16px;
+    padding: 2px 8px;
+}
+
 .page {
     font-family: sans-serif;
     padding: 20px;
@@ -40,7 +87,7 @@
     gap: 8px;
     margin-bottom: 16px;
     padding: 12px;
-    border: 1px solid #ddd;
+    border: 1px solid var(--tema-borda);
     border-radius: 4px;
 }
 
@@ -69,7 +116,7 @@
 
 .data-table thead tr {
     text-align: left;
-    border-bottom: 2px solid #ddd;
+    border-bottom: 2px solid var(--tema-borda);
 }
 
 .data-table th,
@@ -78,7 +125,7 @@
 }
 
 .data-table tbody tr {
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid var(--tema-borda-suave);
 }
 
 .mb-24 {
@@ -198,7 +245,7 @@
 }
 
 .card {
-    border: 1px solid #ddd;
+    border: 1px solid var(--tema-borda);
     border-radius: 8px;
     padding: 16px;
     min-width: 160px;
@@ -216,7 +263,7 @@
 }
 
 .messages-box {
-    border: 1px solid #ddd;
+    border: 1px solid var(--tema-borda);
     border-radius: 4px;
     padding: 12px;
     max-height: 300px;
@@ -243,16 +290,16 @@
 }
 
 .message-bubble--cliente {
-    background-color: #f3f4f6;
+    background-color: var(--tema-bolha-cliente);
 }
 
 .message-bubble--atendente {
-    background-color: #dbeafe;
+    background-color: var(--tema-bolha-atendente);
 }
 
 .message-meta {
     font-size: 11px;
-    color: #888;
+    color: var(--tema-texto-suave);
 }
 
 .message-form {
@@ -267,14 +314,14 @@
 }
 
 .order-card {
-    border: 1px solid #ddd;
+    border: 1px solid var(--tema-borda);
     border-radius: 4px;
     padding: 12px;
     margin-bottom: 12px;
 }
 
 .order-form {
-    border: 1px solid #ddd;
+    border: 1px solid var(--tema-borda);
     border-radius: 4px;
     padding: 12px;
     margin-bottom: 24px;

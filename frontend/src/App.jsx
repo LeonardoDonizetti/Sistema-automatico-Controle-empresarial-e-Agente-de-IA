@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Routes, Route, Navigate, NavLink } from "react-router-dom";
 import Login from "./pages/Login";
 import Atendimentos from "./pages/Atendimentos";
@@ -10,6 +10,17 @@ import Alertas from "./pages/Alertas";
 import Dashboard from "./pages/Dashboard";
 
 function App() {
+    const [tema, setTema] = useState(() => localStorage.getItem("tema") || "light");
+
+    useEffect(() => {
+        document.documentElement.setAttribute("data-theme", tema);
+        localStorage.setItem("tema", tema);
+    }, [tema]);
+
+    function alternarTema() {
+        setTema((atual) => (atual === "dark" ? "light" : "dark"));
+    }
+
     const [usuario, setUsuario] = useState(() => {
         const salvo = localStorage.getItem("usuario");
         return salvo ? JSON.parse(salvo) : null;
@@ -29,7 +40,7 @@ function App() {
         marginRight: 16,
         fontWeight: isActive ? "bold" : "normal",
         textDecoration: "none",
-        color: isActive ? "#111" : "#555",
+        color: isActive ? "var(--tema-link-ativo)" : "var(--tema-link)",
     });
 
     return (
@@ -40,7 +51,7 @@ function App() {
                     justifyContent: "space-between",
                     alignItems: "center",
                     padding: "12px 20px",
-                    borderBottom: "1px solid #ddd",
+                    borderBottom: "1px solid var(--tema-borda)",
                     fontFamily: "sans-serif",
                 }}
             >
@@ -72,6 +83,9 @@ function App() {
                     </nav>
                 </div>
                 <div>
+                    <button onClick={alternarTema} className="btn-tema" aria-label="Alternar tema claro/escuro">
+                        {tema === "dark" ? "☀️" : "🌙"}
+                    </button>{" "}
                     {usuario.nome} ({usuario.cargo}){" "}
                     <button onClick={handleLogout}>Sair</button>
                 </div>
