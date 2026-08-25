@@ -13,6 +13,11 @@ const dashboardRoutes = require("./routes/dashboardRoutes");
 
 const app = express();
 
+// Confia no primeiro proxy reverso na frente da aplicação (o do Railway),
+// para o rate limiter identificar o IP real de cada usuário via
+// X-Forwarded-For em vez do IP do próprio proxy.
+app.set("trust proxy", 1);
+
 // Não informa que estamos usando Express
 app.disable("x-powered-by");
 
