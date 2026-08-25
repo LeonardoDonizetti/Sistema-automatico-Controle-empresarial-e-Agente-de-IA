@@ -60,4 +60,16 @@ app.get("/api/health", (req, res) => {
     });
 });
 
+// Middleware de erro central: captura qualquer erro não tratado
+// (inclusive corpo de requisição malformado) e nunca vaza detalhe interno.
+app.use((err, req, res, next) => {
+    if (res.headersSent) {
+        return next(err);
+    }
+
+    console.error("Erro não tratado:", err.message);
+
+    return res.status(500).json({ erro: "Erro interno do servidor." });
+});
+
 module.exports = app;
