@@ -9,6 +9,11 @@ const loginSchema = z.object({
     senha: z.string().min(1).max(128),
 });
 
+// Hash dummy fixo, usado quando o e-mail não existe para que o argon2.verify
+// sempre rode e o tempo de resposta não revele se o e-mail está cadastrado.
+const HASH_DUMMY =
+    "$argon2id$v=19$m=65536,p=4,t=3$zrxdG23a+CQH1/WuODd8Dw$z7/S4WhLUSaH9Ims9gzjIrqlAR+ucLlC5YnZ3KIZMc0";
+
 async function login(req, res) {
     try {
         const resultado = loginSchema.safeParse(req.body);
@@ -27,18 +32,14 @@ async function login(req, res) {
             },
         });
 
-        if (!usuario || !usuario.ativo) {
-            return res.status(401).json({
-                erro: "E-mail ou senha inválidos.",
-            });
-        }
+        const usuarioValido = usuario && usuario.ativo;
 
         const senhaValida = await argon2.verify(
-            usuario.senhaHash,
+            usuarioValido ? usuario.senhaHash : HASH_DUMMY,
             senha
         );
 
-        if (!senhaValida) {
+        if (!usuarioValido || !senhaValida) {
             return res.status(401).json({
                 erro: "E-mail ou senha inválidos.",
             });
