@@ -1,6 +1,7 @@
 const { z } = require("zod");
 
 const prisma = require("../config/prisma");
+const { parsePaginacao, metaPaginacao } = require("../utils/paginacao");
 
 const STATUS_VALIDOS = ["aguardando", "em_atendimento", "resolvido", "fechado"];
 
@@ -75,16 +76,26 @@ async function listarAtendimentos(req, res) {
             where.clienteId = id;
         }
 
-        const atendimentos = await prisma.conversa.findMany({
-            where,
-            orderBy: { criadoEm: "desc" },
-            include: {
-                cliente: { select: { id: true, nome: true, telefone: true } },
-                atendente: { select: { id: true, nome: true } },
-            },
-        });
+        const { pagina, porPagina, skip, take } = parsePaginacao(req.query);
 
-        return res.json({ atendimentos });
+        const [atendimentos, total] = await Promise.all([
+            prisma.conversa.findMany({
+                where,
+                orderBy: { criadoEm: "desc" },
+                include: {
+                    cliente: { select: { id: true, nome: true, telefone: true } },
+                    atendente: { select: { id: true, nome: true } },
+                },
+                skip,
+                take,
+            }),
+            prisma.conversa.count({ where }),
+        ]);
+
+        return res.json({
+            atendimentos,
+            paginacao: metaPaginacao(total, pagina, porPagina),
+        });
     } catch (error) {
         console.error("Erro ao listar atendimentos:", error.message);
         return res.status(500).json({ erro: "Erro interno do servidor." });
@@ -202,6 +213,19 @@ async function atualizarAtendimento(req, res) {
             if (!transicoesPermitidas.includes(dados.status)) {
                 return res.status(400).json({
                     erro: `Não é possível mudar de "${atendimentoExistente.status}" para "${dados.status}".`,
+                });
+            }
+        }
+
+        const alterandoAtendente = Object.prototype.hasOwnProperty.call(dados, "atendenteId");
+
+        if (alterandoAtendente) {
+            const ehAdmin = req.usuario.cargo === "admin";
+            const ehResponsavelAtual = atendimentoExistente.atendenteId === Number(req.usuario.sub);
+
+            if (!ehAdmin && !ehResponsavelAtual) {
+                return res.status(403).json({
+                    erro: "Apenas o admin ou o atendente responsável atual podem transferir ou desatribuir este atendimento.",
                 });
             }
         }

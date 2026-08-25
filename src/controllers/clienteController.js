@@ -1,6 +1,7 @@
 const { z } = require("zod");
 
 const prisma = require("../config/prisma");
+const { parsePaginacao, metaPaginacao } = require("../utils/paginacao");
 
 const criarClienteSchema = z.object({
     nome: z.string().trim().min(1).max(150),
@@ -23,11 +24,21 @@ function parseId(valor) {
 
 async function listarClientes(req, res) {
     try {
-        const clientes = await prisma.cliente.findMany({
-            orderBy: { nome: "asc" },
-        });
+        const { pagina, porPagina, skip, take } = parsePaginacao(req.query);
 
-        return res.json({ clientes });
+        const [clientes, total] = await Promise.all([
+            prisma.cliente.findMany({
+                orderBy: { nome: "asc" },
+                skip,
+                take,
+            }),
+            prisma.cliente.count(),
+        ]);
+
+        return res.json({
+            clientes,
+            paginacao: metaPaginacao(total, pagina, porPagina),
+        });
     } catch (error) {
         console.error("Erro ao listar clientes:", error.message);
         return res.status(500).json({ erro: "Erro interno do servidor." });

@@ -2,6 +2,7 @@ const argon2 = require("argon2");
 const { z } = require("zod");
 
 const prisma = require("../config/prisma");
+const { parsePaginacao, metaPaginacao } = require("../utils/paginacao");
 
 const CARGOS_VALIDOS = ["admin", "atendente"];
 
@@ -38,12 +39,20 @@ function parseId(valor) {
 
 async function listarUsuarios(req, res) {
     try {
-        const usuarios = await prisma.usuario.findMany({
-            orderBy: { nome: "asc" },
-        });
+        const { pagina, porPagina, skip, take } = parsePaginacao(req.query);
+
+        const [usuarios, total] = await Promise.all([
+            prisma.usuario.findMany({
+                orderBy: { nome: "asc" },
+                skip,
+                take,
+            }),
+            prisma.usuario.count(),
+        ]);
 
         return res.json({
             usuarios: usuarios.map(usuarioPublico),
+            paginacao: metaPaginacao(total, pagina, porPagina),
         });
     } catch (error) {
         console.error("Erro ao listar usuários:", error.message);

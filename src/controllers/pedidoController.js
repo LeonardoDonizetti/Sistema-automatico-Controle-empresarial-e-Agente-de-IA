@@ -1,6 +1,7 @@
 const { z } = require("zod");
 
 const prisma = require("../config/prisma");
+const { parsePaginacao, metaPaginacao } = require("../utils/paginacao");
 
 const STATUS_VALIDOS = [
     "orcamento",
@@ -103,13 +104,23 @@ async function listarPedidos(req, res) {
             where.atendimentoId = id;
         }
 
-        const pedidos = await prisma.pedido.findMany({
-            where,
-            orderBy: { criadoEm: "desc" },
-            include: { itens: true },
-        });
+        const { pagina, porPagina, skip, take } = parsePaginacao(req.query);
 
-        return res.json({ pedidos: pedidos.map(formatarPedido) });
+        const [pedidos, total] = await Promise.all([
+            prisma.pedido.findMany({
+                where,
+                orderBy: { criadoEm: "desc" },
+                include: { itens: true },
+                skip,
+                take,
+            }),
+            prisma.pedido.count({ where }),
+        ]);
+
+        return res.json({
+            pedidos: pedidos.map(formatarPedido),
+            paginacao: metaPaginacao(total, pagina, porPagina),
+        });
     } catch (error) {
         console.error("Erro ao listar pedidos:", error.message);
         return res.status(500).json({ erro: "Erro interno do servidor." });
