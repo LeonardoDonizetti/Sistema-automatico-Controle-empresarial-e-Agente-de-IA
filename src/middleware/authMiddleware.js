@@ -24,6 +24,7 @@ function autenticar(req, res, next) {
             token,
             process.env.JWT_SECRET,
             {
+                algorithms: ["HS256"],
                 issuer: "sistema-atendimento",
                 audience: "painel-atendimento",
             }
