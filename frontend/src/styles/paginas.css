@@ -134,6 +134,19 @@ button:disabled {
     margin-bottom: 16px;
 }
 
+.tabs-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+}
+
+.tab-button--ativa {
+    background-color: var(--tema-botao-bg-active);
+    border-bottom: 2px solid var(--tema-link-ativo);
+    font-weight: 600;
+}
+
 .actions-row {
     margin-bottom: 24px;
 }

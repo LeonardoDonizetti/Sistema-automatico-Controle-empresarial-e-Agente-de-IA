@@ -3,11 +3,19 @@ import { Link } from "react-router-dom";
 import { api } from "../services/api";
 import Paginacao from "../components/Paginacao";
 
+const ABAS_STATUS = [
+    { valor: "aguardando,em_atendimento,resolvido", rotulo: "Ativos" },
+    { valor: "aguardando", rotulo: "Aguardando" },
+    { valor: "em_atendimento", rotulo: "Em atendimento" },
+    { valor: "resolvido", rotulo: "Resolvido" },
+    { valor: "fechado", rotulo: "Fechado" },
+];
+
 export default function Atendimentos() {
     const [atendimentos, setAtendimentos] = useState([]);
     const [carregando, setCarregando] = useState(true);
     const [erro, setErro] = useState("");
-    const [filtroStatus, setFiltroStatus] = useState("");
+    const [filtroStatus, setFiltroStatus] = useState(ABAS_STATUS[0].valor);
     const [pagina, setPagina] = useState(1);
     const [totalPaginas, setTotalPaginas] = useState(1);
 
@@ -52,15 +60,17 @@ export default function Atendimentos() {
         <div className="page">
             <h2>Central de Atendimentos</h2>
 
-            <div className="filter-row">
-                <label>Filtrar por status: </label>
-                <select value={filtroStatus} onChange={(e) => alterarFiltroStatus(e.target.value)}>
-                    <option value="">Todos</option>
-                    <option value="aguardando">Aguardando</option>
-                    <option value="em_atendimento">Em atendimento</option>
-                    <option value="resolvido">Resolvido</option>
-                    <option value="fechado">Fechado</option>
-                </select>
+            <div className="tabs-row">
+                {ABAS_STATUS.map((aba) => (
+                    <button
+                        key={aba.valor}
+                        type="button"
+                        onClick={() => alterarFiltroStatus(aba.valor)}
+                        className={aba.valor === filtroStatus ? "tab-button--ativa" : undefined}
+                    >
+                        {aba.rotulo}
+                    </button>
+                ))}
             </div>
 
             {erro && <p className="error-text">{erro}</p>}
