@@ -53,6 +53,21 @@ export default function AtendimentoDetalhe() {
         }));
     }
 
+    const [pedidosEditando, setPedidosEditando] = useState({});
+
+    function alternarEdicaoPedido(pedidoId) {
+        const abrindo = !pedidosEditando[pedidoId];
+        setPedidosEditando((atual) => ({ ...atual, [pedidoId]: abrindo }));
+
+        if (!abrindo) {
+            setNovoItemPorPedido((atual) => {
+                const copia = { ...atual };
+                delete copia[pedidoId];
+                return copia;
+            });
+        }
+    }
+
     async function carregar() {
         setCarregando(true);
         setErro("");
@@ -278,6 +293,7 @@ export default function AtendimentoDetalhe() {
             {pedidos.map((pedido) => {
                 const ehEntregue = pedido.status === "entregue";
                 const expandido = !ehEntregue || Boolean(pedidosExpandidos[pedido.id]);
+                const editando = !ehEntregue && Boolean(pedidosEditando[pedido.id]);
                 const rascunhoItem = novoItemPorPedido[pedido.id] || {
                     descricao: "",
                     quantidade: 1,
@@ -312,58 +328,71 @@ export default function AtendimentoDetalhe() {
                                             {item.quantidade}x {item.descricao} — R${" "}
                                             {item.precoUnitario.toFixed(2)} (subtotal: R${" "}
                                             {item.subtotal.toFixed(2)})
-                                            <button
-                                                type="button"
-                                                onClick={() => removerItemPedido(pedido.id, item.id)}
-                                                className="btn-spaced-esquerda"
-                                            >
-                                                Remover
-                                            </button>
+                                            {editando && (
+                                                <button
+                                                    type="button"
+                                                    onClick={() => removerItemPedido(pedido.id, item.id)}
+                                                    className="btn-spaced-esquerda"
+                                                >
+                                                    Remover
+                                                </button>
+                                            )}
                                         </li>
                                     ))}
                                 </ul>
                                 <p>
                                     <strong>Total: R$ {pedido.valorTotal.toFixed(2)}</strong>
                                 </p>
-                                <form
-                                    onSubmit={(evento) => adicionarItemPedido(pedido.id, evento)}
-                                    className="order-item-row"
-                                >
-                                    <input
-                                        type="text"
-                                        placeholder="Descrição"
-                                        value={rascunhoItem.descricao}
-                                        onChange={(e) =>
-                                            atualizarNovoItem(pedido.id, "descricao", e.target.value)
-                                        }
-                                        required
-                                        className="order-item-desc"
-                                    />
-                                    <input
-                                        type="number"
-                                        placeholder="Qtd"
-                                        min="1"
-                                        value={rascunhoItem.quantidade}
-                                        onChange={(e) =>
-                                            atualizarNovoItem(pedido.id, "quantidade", e.target.value)
-                                        }
-                                        required
-                                        className="flex-1-padded"
-                                    />
-                                    <input
-                                        type="number"
-                                        placeholder="Preço unitário"
-                                        min="0.01"
-                                        step="0.01"
-                                        value={rascunhoItem.precoUnitario}
-                                        onChange={(e) =>
-                                            atualizarNovoItem(pedido.id, "precoUnitario", e.target.value)
-                                        }
-                                        required
-                                        className="flex-1-padded"
-                                    />
-                                    <button type="submit">Adicionar item</button>
-                                </form>
+                                {!ehEntregue && (
+                                    <button
+                                        type="button"
+                                        onClick={() => alternarEdicaoPedido(pedido.id)}
+                                        className="btn-mb"
+                                    >
+                                        {editando ? "Concluir edição" : "Editar itens"}
+                                    </button>
+                                )}
+                                {editando && (
+                                    <form
+                                        onSubmit={(evento) => adicionarItemPedido(pedido.id, evento)}
+                                        className="order-item-row"
+                                    >
+                                        <input
+                                            type="text"
+                                            placeholder="Descrição"
+                                            value={rascunhoItem.descricao}
+                                            onChange={(e) =>
+                                                atualizarNovoItem(pedido.id, "descricao", e.target.value)
+                                            }
+                                            required
+                                            className="order-item-desc"
+                                        />
+                                        <input
+                                            type="number"
+                                            placeholder="Qtd"
+                                            min="1"
+                                            value={rascunhoItem.quantidade}
+                                            onChange={(e) =>
+                                                atualizarNovoItem(pedido.id, "quantidade", e.target.value)
+                                            }
+                                            required
+                                            className="flex-1-padded"
+                                        />
+                                        <input
+                                            type="number"
+                                            placeholder="Preço unitário"
+                                            min="0.01"
+                                            step="0.01"
+                                            value={rascunhoItem.precoUnitario}
+                                            onChange={(e) =>
+                                                atualizarNovoItem(pedido.id, "precoUnitario", e.target.value)
+                                            }
+                                            required
+                                            className="flex-1-padded"
+                                        />
+                                        <button type="submit">Adicionar item</button>
+                                    </form>
+                                )}
                                 <div>
                                     {TRANSICOES_PEDIDO[pedido.status].map((proximoStatus) => (
                                         <button
