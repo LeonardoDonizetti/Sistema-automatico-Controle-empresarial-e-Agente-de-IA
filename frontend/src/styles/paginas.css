@@ -99,6 +99,7 @@ button:disabled {
 
 .page {
     padding: 24px;
+    text-align: left;
 }
 
 .page-narrow {
