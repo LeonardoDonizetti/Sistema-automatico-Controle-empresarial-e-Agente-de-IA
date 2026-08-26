@@ -368,3 +368,32 @@ h3 {
 .history-item {
     margin-bottom: 4px;
 }
+
+.historico-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0 12px;
+    padding: 0;
+    background: none;
+    border: none;
+    font-family: var(--fonte-base);
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--tema-texto-titulo);
+    cursor: pointer;
+}
+
+.historico-toggle:hover {
+    color: var(--tema-link-ativo);
+}
+
+.historico-seta {
+    display: inline-block;
+    font-size: 12px;
+    transition: transform 0.2s ease;
+}
+
+.historico-seta--aberta {
+    transform: rotate(90deg);
+}

@@ -33,6 +33,8 @@ export default function AtendimentoDetalhe() {
     ]);
     const [salvandoPedido, setSalvandoPedido] = useState(false);
 
+    const [historicoAberto, setHistoricoAberto] = useState(false);
+
     async function carregar() {
         setCarregando(true);
         setErro("");
@@ -308,16 +310,30 @@ export default function AtendimentoDetalhe() {
                 </form>
             )}
 
-            <h3>Histórico</h3>
-            <ul>
-                {atendimento.historico.map((evento) => (
-                    <li key={evento.id} className="history-item">
-                        <strong>{new Date(evento.criadoEm).toLocaleString()}</strong> —{" "}
-                        {evento.descricao}
-                        {evento.usuario && ` (${evento.usuario.nome})`}
-                    </li>
-                ))}
-            </ul>
+            <button
+                type="button"
+                onClick={() => setHistoricoAberto((aberto) => !aberto)}
+                className="historico-toggle"
+                aria-expanded={historicoAberto}
+            >
+                <span className={`historico-seta${historicoAberto ? " historico-seta--aberta" : ""}`}>
+                    ▶
+                </span>
+                Histórico ({atendimento.historico.length}{" "}
+                {atendimento.historico.length === 1 ? "evento" : "eventos"})
+            </button>
+
+            {historicoAberto && (
+                <ul>
+                    {atendimento.historico.map((evento) => (
+                        <li key={evento.id} className="history-item">
+                            <strong>{new Date(evento.criadoEm).toLocaleString()}</strong> —{" "}
+                            {evento.descricao}
+                            {evento.usuario && ` (${evento.usuario.nome})`}
+                        </li>
+                    ))}
+                </ul>
+            )}
         </div>
     );
 }
