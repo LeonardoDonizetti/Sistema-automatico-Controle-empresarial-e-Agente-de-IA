@@ -6,7 +6,5 @@ node_modules/
 .env.*
 !.env.example
 /src/generated/prisma
-comandosgit.txt
-Terminal-INIT.txt
 ALERTA_SEM_RESPONSAVEL_MINUTOS=30
 ALERTA_CLIENTE_AGUARDANDO_MINUTOS=30
