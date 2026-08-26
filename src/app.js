@@ -10,6 +10,7 @@ const atendimentoRoutes = require("./routes/atendimentoRoutes");
 const alertaRoutes = require("./routes/alertaRoutes");
 const pedidoRoutes = require("./routes/pedidoRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
+const whatsappRoutes = require("./routes/whatsappRoutes");
 
 const app = express();
 
@@ -61,6 +62,7 @@ app.use("/api/atendimentos", atendimentoRoutes);
 app.use("/api/alertas", alertaRoutes);
 app.use("/api/pedidos", pedidoRoutes);
 app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/whatsapp", whatsappRoutes);
 
 // Rota de teste
 app.get("/api/health", (req, res) => {
