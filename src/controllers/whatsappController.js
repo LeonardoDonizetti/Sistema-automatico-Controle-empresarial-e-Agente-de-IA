@@ -83,9 +83,11 @@ async function receberWebhook(req, res) {
     console.log("WEBHOOK POST RECEBIDO", new Date().toISOString());
 
     try {
+        console.log("1 - extraindo mensagem do payload");
         const mensagemRecebida = req.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0];
 
         if (!mensagemRecebida) {
+            console.log("1b - nenhuma mensagem no payload, encerrando");
             return res.sendStatus(200);
         }
 
@@ -94,32 +96,43 @@ async function receberWebhook(req, res) {
         const texto = mensagemRecebida.text?.body || "";
 
         if (!wamid || !telefone) {
+            console.log("1c - wamid ou telefone ausente, encerrando");
             return res.sendStatus(200);
         }
 
+        console.log("2 - verificando idempotencia (wamid:", wamid, ")");
         try {
             await prisma.mensagemWhatsappProcessada.create({ data: { wamid } });
         } catch (error) {
             if (error.code === "P2002") {
+                console.log("2b - wamid ja processado antes, encerrando");
                 return res.sendStatus(200);
             }
             throw error;
         }
 
+        console.log("3 - buscando cliente pelo telefone");
         const cliente = await prisma.cliente.findUnique({ where: { telefone } });
 
         if (!cliente) {
+            console.log("4 - cliente nao encontrado, verificando AguardandoNomeWhatsapp");
             const aguardando = await prisma.aguardandoNomeWhatsapp.findUnique({ where: { telefone } });
 
             if (!aguardando) {
+                console.log("5 - primeira mensagem deste telefone, criando AguardandoNomeWhatsapp");
                 await prisma.aguardandoNomeWhatsapp.create({ data: { telefone } });
 
+                console.log("6 - chamando Gemini para gerar pergunta de nome");
                 const pergunta = await gerarPerguntaDeNome();
+
+                console.log("7 - enviando pergunta de nome via WhatsApp");
                 await enviarMensagemWhatsapp(telefone, pergunta);
 
+                console.log("8 - fim do fluxo (primeira mensagem), respondendo 200");
                 return res.sendStatus(200);
             }
 
+            console.log("9 - ja havia AguardandoNomeWhatsapp, criando Cliente e Atendimento (transacao)");
             const novoCliente = await prisma.$transaction(async (tx) => {
                 const clienteCriado = await tx.cliente.create({
                     data: { nome: texto, telefone },
@@ -134,25 +147,30 @@ async function receberWebhook(req, res) {
                 return clienteCriado;
             });
 
+            console.log("10 - enviando mensagem de confirmacao via WhatsApp");
             await enviarMensagemWhatsapp(
                 telefone,
                 `Obrigado, ${novoCliente.nome}! Em breve um atendente vai falar com você.`
             );
 
+            console.log("11 - fim do fluxo (cliente criado), respondendo 200");
             return res.sendStatus(200);
         }
 
+        console.log("12 - cliente encontrado, buscando atendimento em aberto");
         let atendimento = await prisma.conversa.findFirst({
             where: { clienteId: cliente.id, status: { not: "fechado" } },
             orderBy: { criadoEm: "desc" },
         });
 
         if (!atendimento) {
+            console.log("13 - nenhum atendimento em aberto, criando novo");
             atendimento = await prisma.conversa.create({
                 data: { clienteId: cliente.id, status: "aguardando" },
             });
         }
 
+        console.log("14 - registrando mensagem recebida na tabela Mensagem");
         await prisma.mensagem.create({
             data: {
                 conversaId: atendimento.id,
@@ -162,9 +180,11 @@ async function receberWebhook(req, res) {
             },
         });
 
+        console.log("15 - fim do fluxo (cliente existente), respondendo 200");
         return res.sendStatus(200);
     } catch (error) {
-        console.error("Erro no webhook do WhatsApp:", error.message);
+        console.error("Erro no webhook do WhatsApp - objeto completo:", error);
+        console.error("Erro no webhook do WhatsApp - stack:", error.stack);
         return res.sendStatus(200);
     }
 }
