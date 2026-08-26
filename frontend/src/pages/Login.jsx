@@ -27,7 +27,7 @@ export default function Login({ aoLogar }) {
 
     return (
         <div className="login-container">
-            <h1>Sistema de Atendimento</h1>
+            <h1 className="login-titulo">Sistema de Atendimento</h1>
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
                     <label>E-mail</label>
