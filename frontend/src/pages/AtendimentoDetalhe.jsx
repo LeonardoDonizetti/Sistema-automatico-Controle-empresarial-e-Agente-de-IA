@@ -35,6 +35,12 @@ export default function AtendimentoDetalhe() {
 
     const [historicoAberto, setHistoricoAberto] = useState(false);
 
+    const [pedidosExpandidos, setPedidosExpandidos] = useState({});
+
+    function alternarPedidoExpandido(pedidoId) {
+        setPedidosExpandidos((atual) => ({ ...atual, [pedidoId]: !atual[pedidoId] }));
+    }
+
     async function carregar() {
         setCarregando(true);
         setErro("");
@@ -227,35 +233,60 @@ export default function AtendimentoDetalhe() {
 
             {pedidos.length === 0 && <p>Nenhum pedido para este atendimento.</p>}
 
-            {pedidos.map((pedido) => (
-                <div key={pedido.id} className="order-card">
-                    <p>
-                        <strong>Pedido #{pedido.id}</strong> — status: {pedido.status}
-                    </p>
-                    <ul>
-                        {pedido.itens.map((item) => (
-                            <li key={item.id}>
-                                {item.quantidade}x {item.descricao} — R$ {item.precoUnitario.toFixed(2)} (subtotal: R${" "}
-                                {item.subtotal.toFixed(2)})
-                            </li>
-                        ))}
-                    </ul>
-                    <p>
-                        <strong>Total: R$ {pedido.valorTotal.toFixed(2)}</strong>
-                    </p>
-                    <div>
-                        {TRANSICOES_PEDIDO[pedido.status].map((proximoStatus) => (
+            {pedidos.map((pedido) => {
+                const ehEntregue = pedido.status === "entregue";
+                const expandido = !ehEntregue || Boolean(pedidosExpandidos[pedido.id]);
+
+                return (
+                    <div key={pedido.id} className="order-card">
+                        {ehEntregue ? (
                             <button
-                                key={proximoStatus}
-                                onClick={() => mudarStatusPedido(pedido.id, proximoStatus)}
-                                className="btn-spaced"
+                                type="button"
+                                onClick={() => alternarPedidoExpandido(pedido.id)}
+                                className="pedido-toggle"
+                                aria-expanded={expandido}
                             >
-                                Mudar para: {proximoStatus}
+                                <span className={`pedido-seta${expandido ? " pedido-seta--aberta" : ""}`}>
+                                    ▶
+                                </span>
+                                Pedido #{pedido.id} — Entregue — R$ {pedido.valorTotal.toFixed(2)}
                             </button>
-                        ))}
+                        ) : (
+                            <p>
+                                <strong>Pedido #{pedido.id}</strong> — status: {pedido.status}
+                            </p>
+                        )}
+
+                        {expandido && (
+                            <>
+                                <ul>
+                                    {pedido.itens.map((item) => (
+                                        <li key={item.id}>
+                                            {item.quantidade}x {item.descricao} — R${" "}
+                                            {item.precoUnitario.toFixed(2)} (subtotal: R${" "}
+                                            {item.subtotal.toFixed(2)})
+                                        </li>
+                                    ))}
+                                </ul>
+                                <p>
+                                    <strong>Total: R$ {pedido.valorTotal.toFixed(2)}</strong>
+                                </p>
+                                <div>
+                                    {TRANSICOES_PEDIDO[pedido.status].map((proximoStatus) => (
+                                        <button
+                                            key={proximoStatus}
+                                            onClick={() => mudarStatusPedido(pedido.id, proximoStatus)}
+                                            className="btn-spaced"
+                                        >
+                                            Mudar para: {proximoStatus}
+                                        </button>
+                                    ))}
+                                </div>
+                            </>
+                        )}
                     </div>
-                </div>
-            ))}
+                );
+            })}
 
             <button onClick={() => setMostrarFormPedido(!mostrarFormPedido)} className="btn-mb">
                 {mostrarFormPedido ? "Cancelar" : "+ Novo pedido"}
