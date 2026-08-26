@@ -80,6 +80,8 @@ function verificarWebhook(req, res) {
 }
 
 async function receberWebhook(req, res) {
+    console.log("WEBHOOK POST RECEBIDO", new Date().toISOString());
+
     try {
         const mensagemRecebida = req.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0];
 
