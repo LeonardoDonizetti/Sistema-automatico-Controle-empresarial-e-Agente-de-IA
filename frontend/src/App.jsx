@@ -50,7 +50,7 @@ function App() {
                     display: "flex",
                     justifyContent: "space-between",
                     alignItems: "center",
-                    padding: "12px 20px",
+                    padding: "12px 24px",
                     borderBottom: "1px solid var(--tema-borda)",
                     fontFamily: "sans-serif",
                 }}
