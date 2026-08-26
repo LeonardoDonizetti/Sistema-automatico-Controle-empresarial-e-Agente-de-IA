@@ -31,7 +31,7 @@ async function enviarMensagemWhatsapp(telefone, texto) {
 
 async function gerarPerguntaDeNome() {
     try {
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${process.env.GOOGLE_API_KEY}`;
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${process.env.GOOGLE_API_KEY}`;
 
         const resposta = await fetch(url, {
             method: "POST",
