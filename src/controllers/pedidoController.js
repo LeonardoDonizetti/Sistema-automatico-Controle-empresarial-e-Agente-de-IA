@@ -82,10 +82,13 @@ async function listarPedidos(req, res) {
         const where = {};
 
         if (status) {
-            if (!STATUS_VALIDOS.includes(status)) {
+            const statusList = status.split(",").map((s) => s.trim()).filter(Boolean);
+
+            if (statusList.length === 0 || !statusList.every((s) => STATUS_VALIDOS.includes(s))) {
                 return res.status(400).json({ erro: "Status inválido para filtro." });
             }
-            where.status = status;
+
+            where.status = statusList.length === 1 ? statusList[0] : { in: statusList };
         }
 
         if (clienteId) {
