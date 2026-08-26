@@ -125,6 +125,10 @@ button:disabled {
     margin-right: 8px;
 }
 
+.btn-spaced-esquerda {
+    margin-left: 8px;
+}
+
 .filter-row {
     margin-bottom: 16px;
 }

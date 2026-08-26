@@ -41,6 +41,18 @@ export default function AtendimentoDetalhe() {
         setPedidosExpandidos((atual) => ({ ...atual, [pedidoId]: !atual[pedidoId] }));
     }
 
+    const [novoItemPorPedido, setNovoItemPorPedido] = useState({});
+
+    function atualizarNovoItem(pedidoId, campo, valor) {
+        setNovoItemPorPedido((atual) => ({
+            ...atual,
+            [pedidoId]: {
+                ...(atual[pedidoId] || { descricao: "", quantidade: 1, precoUnitario: "" }),
+                [campo]: valor,
+            },
+        }));
+    }
+
     async function carregar() {
         setCarregando(true);
         setErro("");
@@ -147,6 +159,36 @@ export default function AtendimentoDetalhe() {
         }
     }
 
+    async function adicionarItemPedido(pedidoId, evento) {
+        evento.preventDefault();
+        const rascunho = novoItemPorPedido[pedidoId] || { descricao: "", quantidade: 1, precoUnitario: "" };
+
+        try {
+            await api.post(`/pedidos/${pedidoId}/itens`, {
+                descricao: rascunho.descricao,
+                quantidade: Number(rascunho.quantidade),
+                precoUnitario: Number(rascunho.precoUnitario),
+            });
+            setNovoItemPorPedido((atual) => {
+                const copia = { ...atual };
+                delete copia[pedidoId];
+                return copia;
+            });
+            carregarPedidos();
+        } catch (error) {
+            alert(error.message);
+        }
+    }
+
+    async function removerItemPedido(pedidoId, itemId) {
+        try {
+            await api.delete(`/pedidos/${pedidoId}/itens/${itemId}`);
+            carregarPedidos();
+        } catch (error) {
+            alert(error.message);
+        }
+    }
+
     if (carregando) {
         return <p className="page-message">Carregando...</p>;
     }
@@ -236,6 +278,11 @@ export default function AtendimentoDetalhe() {
             {pedidos.map((pedido) => {
                 const ehEntregue = pedido.status === "entregue";
                 const expandido = !ehEntregue || Boolean(pedidosExpandidos[pedido.id]);
+                const rascunhoItem = novoItemPorPedido[pedido.id] || {
+                    descricao: "",
+                    quantidade: 1,
+                    precoUnitario: "",
+                };
 
                 return (
                     <div key={pedido.id} className="order-card">
@@ -265,12 +312,58 @@ export default function AtendimentoDetalhe() {
                                             {item.quantidade}x {item.descricao} — R${" "}
                                             {item.precoUnitario.toFixed(2)} (subtotal: R${" "}
                                             {item.subtotal.toFixed(2)})
+                                            <button
+                                                type="button"
+                                                onClick={() => removerItemPedido(pedido.id, item.id)}
+                                                className="btn-spaced-esquerda"
+                                            >
+                                                Remover
+                                            </button>
                                         </li>
                                     ))}
                                 </ul>
                                 <p>
                                     <strong>Total: R$ {pedido.valorTotal.toFixed(2)}</strong>
                                 </p>
+                                <form
+                                    onSubmit={(evento) => adicionarItemPedido(pedido.id, evento)}
+                                    className="order-item-row"
+                                >
+                                    <input
+                                        type="text"
+                                        placeholder="Descrição"
+                                        value={rascunhoItem.descricao}
+                                        onChange={(e) =>
+                                            atualizarNovoItem(pedido.id, "descricao", e.target.value)
+                                        }
+                                        required
+                                        className="order-item-desc"
+                                    />
+                                    <input
+                                        type="number"
+                                        placeholder="Qtd"
+                                        min="1"
+                                        value={rascunhoItem.quantidade}
+                                        onChange={(e) =>
+                                            atualizarNovoItem(pedido.id, "quantidade", e.target.value)
+                                        }
+                                        required
+                                        className="flex-1-padded"
+                                    />
+                                    <input
+                                        type="number"
+                                        placeholder="Preço unitário"
+                                        min="0.01"
+                                        step="0.01"
+                                        value={rascunhoItem.precoUnitario}
+                                        onChange={(e) =>
+                                            atualizarNovoItem(pedido.id, "precoUnitario", e.target.value)
+                                        }
+                                        required
+                                        className="flex-1-padded"
+                                    />
+                                    <button type="submit">Adicionar item</button>
+                                </form>
                                 <div>
                                     {TRANSICOES_PEDIDO[pedido.status].map((proximoStatus) => (
                                         <button
