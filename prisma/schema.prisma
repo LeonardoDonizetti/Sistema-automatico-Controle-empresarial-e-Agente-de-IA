@@ -139,3 +139,19 @@ model ItemPedido {
   @@index([pedidoId])
   @@map("itens_pedido")
 }
+
+model AguardandoNomeWhatsapp {
+  id       Int      @id @default(autoincrement())
+  telefone String   @unique
+  criadoEm DateTime @default(now()) @map("criado_em")
+
+  @@map("aguardando_nome_whatsapp")
+}
+
+model MensagemWhatsappProcessada {
+  id       Int      @id @default(autoincrement())
+  wamid    String   @unique
+  criadoEm DateTime @default(now()) @map("criado_em")
+
+  @@map("mensagens_whatsapp_processadas")
+}
