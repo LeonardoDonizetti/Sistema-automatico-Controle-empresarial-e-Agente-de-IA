@@ -14,6 +14,10 @@
     --tema-link-ativo: #111;
     --tema-bolha-cliente: #f3f4f6;
     --tema-bolha-atendente: #dbeafe;
+
+    --tema-botao-bg: #eef0f3;
+    --tema-botao-bg-hover: #e2e5ea;
+    --tema-botao-bg-active: #d5d9e0;
 }
 
 :root[data-theme="dark"] {
@@ -30,6 +34,10 @@
     --tema-link-ativo: #f3f4f6;
     --tema-bolha-cliente: #262832;
     --tema-bolha-atendente: #1e3a5f;
+
+    --tema-botao-bg: #262832;
+    --tema-botao-bg-hover: #2f323f;
+    --tema-botao-bg-active: #383c4b;
 }
 
 body {
@@ -56,6 +64,32 @@ h2 {
 h3 {
     font-size: 16px;
     margin: 24px 0 12px;
+}
+
+button {
+    font-family: var(--fonte-base);
+    font-size: 14px;
+    color: var(--tema-texto);
+    background-color: var(--tema-botao-bg);
+    border: 1px solid var(--tema-borda);
+    border-radius: 4px;
+    padding: 6px 12px;
+    cursor: pointer;
+}
+
+button:hover:not(:disabled) {
+    background-color: var(--tema-botao-bg-hover);
+}
+
+button:active:not(:disabled) {
+    background-color: var(--tema-botao-bg-active);
+}
+
+button:disabled {
+    color: var(--tema-texto-suave);
+    border-color: var(--tema-borda-suave);
+    cursor: not-allowed;
+    opacity: 0.6;
 }
 
 .btn-tema {
