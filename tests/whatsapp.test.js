@@ -95,9 +95,36 @@ describe("POST /api/whatsapp/webhook", () => {
         expect(corpoEnvio.text.body).toBe("Oi! Qual é o seu nome?");
     });
 
-    test("telefone novo, segunda mensagem (com nome): cria Cliente e Atendimento, remove AguardandoNomeWhatsapp", async () => {
+    test("telefone novo, segunda mensagem (nome valido): Gemini confirma que e nome, cria Cliente e Atendimento", async () => {
         const telefone = "5511900000002";
         await prisma.aguardandoNomeWhatsapp.create({ data: { telefone } });
+
+        global.fetch = jest.fn((url, options) => {
+            if (typeof url === "string" && url.includes("generativelanguage.googleapis.com")) {
+                const corpo = JSON.parse(options.body);
+                if (corpo.generationConfig?.responseMimeType === "application/json") {
+                    return Promise.resolve({
+                        ok: true,
+                        json: () =>
+                            Promise.resolve({
+                                candidates: [
+                                    {
+                                        content: {
+                                            parts: [
+                                                {
+                                                    text: JSON.stringify({ eh_nome: true, nome_extraido: "Maria Silva" }),
+                                                },
+                                            ],
+                                        },
+                                    },
+                                ],
+                            }),
+                    });
+                }
+            }
+
+            return Promise.resolve({ ok: true, json: () => Promise.resolve({}), text: () => Promise.resolve("") });
+        });
 
         const resposta = await request(app)
             .post("/api/whatsapp/webhook")
@@ -117,9 +144,81 @@ describe("POST /api/whatsapp/webhook", () => {
         const aguardando = await prisma.aguardandoNomeWhatsapp.findUnique({ where: { telefone } });
         expect(aguardando).toBeNull();
 
-        expect(global.fetch).toHaveBeenCalledTimes(1); // so o envio de confirmacao (nao chama Gemini aqui)
-        const corpoEnvio = JSON.parse(global.fetch.mock.calls[0][1].body);
+        expect(global.fetch).toHaveBeenCalledTimes(2); // validacao do nome (Gemini) + confirmacao via WhatsApp
+        const chamadaConfirmacao = global.fetch.mock.calls.find(([u]) => u.includes("graph.facebook.com"));
+        const corpoEnvio = JSON.parse(chamadaConfirmacao[1].body);
         expect(corpoEnvio.text.body).toContain("Maria Silva");
+    });
+
+    test("telefone novo, segunda mensagem (nao e nome): Gemini reprova, mantem AguardandoNomeWhatsapp e pede de novo", async () => {
+        const telefone = "5511900000009";
+        await prisma.aguardandoNomeWhatsapp.create({ data: { telefone } });
+
+        global.fetch = jest.fn((url, options) => {
+            if (typeof url === "string" && url.includes("generativelanguage.googleapis.com")) {
+                const corpo = JSON.parse(options.body);
+                if (corpo.generationConfig?.responseMimeType === "application/json") {
+                    return Promise.resolve({
+                        ok: true,
+                        json: () =>
+                            Promise.resolve({
+                                candidates: [
+                                    {
+                                        content: {
+                                            parts: [{ text: JSON.stringify({ eh_nome: false, nome_extraido: "" }) }],
+                                        },
+                                    },
+                                ],
+                            }),
+                    });
+                }
+            }
+
+            return Promise.resolve({ ok: true, json: () => Promise.resolve({}), text: () => Promise.resolve("") });
+        });
+
+        const resposta = await request(app)
+            .post("/api/whatsapp/webhook")
+            .send(payloadMensagem({ telefone, texto: "Qual o horario de voces?", wamid: "wamid-9" }));
+
+        expect(resposta.status).toBe(200);
+
+        const cliente = await prisma.cliente.findUnique({ where: { telefone } });
+        expect(cliente).toBeNull();
+
+        const aguardando = await prisma.aguardandoNomeWhatsapp.findUnique({ where: { telefone } });
+        expect(aguardando).not.toBeNull();
+
+        expect(global.fetch).toHaveBeenCalledTimes(2); // validacao (Gemini) + reenvio da pergunta de nome
+        const chamadaEnvio = global.fetch.mock.calls.find(([u]) => u.includes("graph.facebook.com"));
+        const corpoEnvio = JSON.parse(chamadaEnvio[1].body);
+        expect(corpoEnvio.text.body).toBe("Desculpe, não entendi. Pode me dizer seu nome, por favor?");
+    });
+
+    test("falha na validacao do Gemini usa fallback (aceita o texto como nome, comportamento atual)", async () => {
+        const telefone = "5511900000010";
+        await prisma.aguardandoNomeWhatsapp.create({ data: { telefone } });
+
+        global.fetch = jest.fn((url, options) => {
+            if (typeof url === "string" && url.includes("generativelanguage.googleapis.com")) {
+                const corpo = JSON.parse(options.body);
+                if (corpo.generationConfig?.responseMimeType === "application/json") {
+                    return Promise.reject(new Error("Falha simulada na validacao do nome"));
+                }
+            }
+
+            return Promise.resolve({ ok: true, json: () => Promise.resolve({}), text: () => Promise.resolve("") });
+        });
+
+        const resposta = await request(app)
+            .post("/api/whatsapp/webhook")
+            .send(payloadMensagem({ telefone, texto: "Joao Pedro", wamid: "wamid-10" }));
+
+        expect(resposta.status).toBe(200);
+
+        const cliente = await prisma.cliente.findUnique({ where: { telefone } });
+        expect(cliente).not.toBeNull();
+        expect(cliente.nome).toBe("Joao Pedro");
     });
 
     test("cliente ja cadastrado sem atendimento aberto: cria atendimento e registra mensagem", async () => {

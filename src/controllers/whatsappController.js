@@ -1,6 +1,7 @@
 const prisma = require("../config/prisma");
 
 const PERGUNTA_NOME_FALLBACK = "Olá! Para começarmos, qual é o seu nome?";
+const PERGUNTA_NOME_RETRY = "Desculpe, não entendi. Pode me dizer seu nome, por favor?";
 
 async function enviarMensagemWhatsapp(telefone, texto) {
     try {
@@ -64,6 +65,53 @@ async function gerarPerguntaDeNome() {
     } catch (error) {
         console.error("Erro ao gerar pergunta de nome via Gemini:", error.message);
         return PERGUNTA_NOME_FALLBACK;
+    }
+}
+
+async function validarNome(texto) {
+    try {
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${process.env.GOOGLE_API_KEY}`;
+
+        const resposta = await fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                contents: [
+                    {
+                        parts: [
+                            {
+                                text: `Uma empresa perguntou "qual é o seu nome?" a um cliente pelo WhatsApp e recebeu a seguinte resposta:\n\n"${texto}"\n\nAnalise se essa resposta realmente é (ou contém) o nome de uma pessoa, e não outra coisa (uma pergunta, saudação, reclamação, número, ou qualquer frase que não seja um nome). Responda apenas com um JSON no formato {"eh_nome": true ou false, "nome_extraido": "nome da pessoa limpo e com a capitalização correta, ou string vazia se eh_nome for false"}.`,
+                            },
+                        ],
+                    },
+                ],
+                generationConfig: {
+                    responseMimeType: "application/json",
+                },
+            }),
+        });
+
+        if (!resposta.ok) {
+            throw new Error(`Gemini respondeu com status ${resposta.status}`);
+        }
+
+        const dados = await resposta.json();
+        const textoResposta = dados?.candidates?.[0]?.content?.parts?.[0]?.text;
+
+        if (!textoResposta) {
+            throw new Error("Resposta do Gemini sem texto.");
+        }
+
+        const json = JSON.parse(textoResposta);
+
+        if (typeof json.eh_nome !== "boolean") {
+            throw new Error("Resposta do Gemini em formato inesperado.");
+        }
+
+        return json;
+    } catch (error) {
+        console.error("Erro ao validar nome via Gemini:", error.message);
+        return { eh_nome: true, nome_extraido: texto };
     }
 }
 
@@ -132,10 +180,23 @@ async function receberWebhook(req, res) {
                 return res.sendStatus(200);
             }
 
-            console.log("9 - ja havia AguardandoNomeWhatsapp, criando Cliente e Atendimento (transacao)");
+            console.log("9 - ja havia AguardandoNomeWhatsapp, validando com o Gemini se o texto e um nome");
+            const validacao = await validarNome(texto);
+
+            if (!validacao.eh_nome) {
+                console.log("9b - texto nao parece ser um nome, mantendo AguardandoNomeWhatsapp e pedindo de novo");
+                await enviarMensagemWhatsapp(telefone, PERGUNTA_NOME_RETRY);
+
+                console.log("9c - fim do fluxo (nome nao validado), respondendo 200");
+                return res.sendStatus(200);
+            }
+
+            const nomeValidado = validacao.nome_extraido?.trim() || texto;
+
+            console.log("10 - nome validado, criando Cliente e Atendimento (transacao)");
             const novoCliente = await prisma.$transaction(async (tx) => {
                 const clienteCriado = await tx.cliente.create({
-                    data: { nome: texto, telefone },
+                    data: { nome: nomeValidado, telefone },
                 });
 
                 await tx.conversa.create({
@@ -147,30 +208,30 @@ async function receberWebhook(req, res) {
                 return clienteCriado;
             });
 
-            console.log("10 - enviando mensagem de confirmacao via WhatsApp");
+            console.log("11 - enviando mensagem de confirmacao via WhatsApp");
             await enviarMensagemWhatsapp(
                 telefone,
                 `Obrigado, ${novoCliente.nome}! Em breve um atendente vai falar com você.`
             );
 
-            console.log("11 - fim do fluxo (cliente criado), respondendo 200");
+            console.log("12 - fim do fluxo (cliente criado), respondendo 200");
             return res.sendStatus(200);
         }
 
-        console.log("12 - cliente encontrado, buscando atendimento em aberto");
+        console.log("13 - cliente encontrado, buscando atendimento em aberto");
         let atendimento = await prisma.conversa.findFirst({
             where: { clienteId: cliente.id, status: { not: "fechado" } },
             orderBy: { criadoEm: "desc" },
         });
 
         if (!atendimento) {
-            console.log("13 - nenhum atendimento em aberto, criando novo");
+            console.log("14 - nenhum atendimento em aberto, criando novo");
             atendimento = await prisma.conversa.create({
                 data: { clienteId: cliente.id, status: "aguardando" },
             });
         }
 
-        console.log("14 - registrando mensagem recebida na tabela Mensagem");
+        console.log("15 - registrando mensagem recebida na tabela Mensagem");
         await prisma.mensagem.create({
             data: {
                 conversaId: atendimento.id,
@@ -180,7 +241,7 @@ async function receberWebhook(req, res) {
             },
         });
 
-        console.log("15 - fim do fluxo (cliente existente), respondendo 200");
+        console.log("16 - fim do fluxo (cliente existente), respondendo 200");
         return res.sendStatus(200);
     } catch (error) {
         console.error("Erro no webhook do WhatsApp - objeto completo:", error);
@@ -194,4 +255,5 @@ module.exports = {
     receberWebhook,
     enviarMensagemWhatsapp,
     gerarPerguntaDeNome,
+    validarNome,
 };
