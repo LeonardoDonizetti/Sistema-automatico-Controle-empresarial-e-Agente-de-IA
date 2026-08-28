@@ -6,6 +6,7 @@ const app = require("../src/app");
 const prisma = require("../src/config/prisma");
 
 const ATENDENTE_EMAIL = "clientes.atendente.teste@teste.com";
+const ADMIN_EMAIL = "clientes.admin.teste@teste.com";
 const SENHA = "SenhaValida123!";
 
 async function criarUsuarioAutenticado() {
@@ -17,6 +18,20 @@ async function criarUsuarioAutenticado() {
             email: ATENDENTE_EMAIL,
             senhaHash,
             cargo: "atendente",
+            ativo: true,
+        },
+    });
+}
+
+async function criarAdminAutenticado() {
+    const senhaHash = await argon2.hash(SENHA);
+
+    return prisma.usuario.create({
+        data: {
+            nome: "Admin Teste Clientes",
+            email: ADMIN_EMAIL,
+            senhaHash,
+            cargo: "admin",
             ativo: true,
         },
     });
@@ -38,18 +53,30 @@ function gerarToken(usuario) {
 }
 
 let token;
+let tokenAdmin;
 
-beforeEach(async () => {
+async function limparDados() {
+    await prisma.itemPedido.deleteMany({});
+    await prisma.pedido.deleteMany({});
+    await prisma.mensagem.deleteMany({});
+    await prisma.historicoAtendimento.deleteMany({});
+    await prisma.conversa.deleteMany({});
     await prisma.cliente.deleteMany({});
     await prisma.usuario.deleteMany({});
+}
+
+beforeEach(async () => {
+    await limparDados();
 
     const usuario = await criarUsuarioAutenticado();
     token = gerarToken(usuario);
+
+    const admin = await criarAdminAutenticado();
+    tokenAdmin = gerarToken(admin);
 });
 
 afterAll(async () => {
-    await prisma.cliente.deleteMany({});
-    await prisma.usuario.deleteMany({});
+    await limparDados();
     await prisma.$disconnect();
 });
 
@@ -116,5 +143,130 @@ describe("PATCH /api/clientes/:id (editar)", () => {
 
         const atualizado = await prisma.cliente.findUnique({ where: { id: cliente.id } });
         expect(atualizado.nome).toBe("Nome Novo");
+    });
+});
+
+describe("DELETE /api/clientes/:id (excluir)", () => {
+    test("atendente (nao-admin) nao pode excluir cliente: retorna 403", async () => {
+        const cliente = await prisma.cliente.create({
+            data: { nome: "Cliente Sem Historico", telefone: "11944444401" },
+        });
+
+        const resposta = await request(app)
+            .delete(`/api/clientes/${cliente.id}`)
+            .set("Authorization", `Bearer ${token}`);
+
+        expect(resposta.status).toBe(403);
+
+        const aindaExiste = await prisma.cliente.findUnique({ where: { id: cliente.id } });
+        expect(aindaExiste).not.toBeNull();
+    });
+
+    test("admin exclui com sucesso cliente sem atendimentos", async () => {
+        const cliente = await prisma.cliente.create({
+            data: { nome: "Cliente Sem Historico", telefone: "11944444402" },
+        });
+
+        const resposta = await request(app)
+            .delete(`/api/clientes/${cliente.id}`)
+            .set("Authorization", `Bearer ${tokenAdmin}`);
+
+        expect(resposta.status).toBe(204);
+
+        const removido = await prisma.cliente.findUnique({ where: { id: cliente.id } });
+        expect(removido).toBeNull();
+    });
+
+    test("admin exclui com sucesso cliente com atendimento vazio (sem mensagens), em cascata", async () => {
+        const cliente = await prisma.cliente.create({
+            data: { nome: "Cliente Atendimento Vazio", telefone: "11944444403" },
+        });
+        const atendimento = await prisma.conversa.create({
+            data: { clienteId: cliente.id, status: "aguardando" },
+        });
+        await prisma.historicoAtendimento.create({
+            data: {
+                atendimentoId: atendimento.id,
+                tipo: "criacao",
+                descricao: "Atendimento criado e adicionado à fila de espera.",
+            },
+        });
+
+        const resposta = await request(app)
+            .delete(`/api/clientes/${cliente.id}`)
+            .set("Authorization", `Bearer ${tokenAdmin}`);
+
+        expect(resposta.status).toBe(204);
+
+        const clienteRemovido = await prisma.cliente.findUnique({ where: { id: cliente.id } });
+        expect(clienteRemovido).toBeNull();
+
+        const atendimentoRemovido = await prisma.conversa.findUnique({ where: { id: atendimento.id } });
+        expect(atendimentoRemovido).toBeNull();
+
+        const historicoRemovido = await prisma.historicoAtendimento.findMany({
+            where: { atendimentoId: atendimento.id },
+        });
+        expect(historicoRemovido).toHaveLength(0);
+    });
+
+    test("bloqueia com 409 cliente com pedido vinculado", async () => {
+        const cliente = await prisma.cliente.create({
+            data: { nome: "Cliente Com Pedido", telefone: "11944444404" },
+        });
+        const atendimento = await prisma.conversa.create({
+            data: { clienteId: cliente.id, status: "aguardando" },
+        });
+        await prisma.pedido.create({
+            data: { atendimentoId: atendimento.id, clienteId: cliente.id, status: "orcamento" },
+        });
+
+        const resposta = await request(app)
+            .delete(`/api/clientes/${cliente.id}`)
+            .set("Authorization", `Bearer ${tokenAdmin}`);
+
+        expect(resposta.status).toBe(409);
+        expect(resposta.body.erro).toBe("Não é possível excluir: este cliente possui pedidos registrados.");
+
+        const aindaExiste = await prisma.cliente.findUnique({ where: { id: cliente.id } });
+        expect(aindaExiste).not.toBeNull();
+    });
+
+    test("bloqueia com 409 cliente com mensagens reais registradas", async () => {
+        const cliente = await prisma.cliente.create({
+            data: { nome: "Cliente Com Mensagem", telefone: "11944444405" },
+        });
+        const atendimento = await prisma.conversa.create({
+            data: { clienteId: cliente.id, status: "aguardando" },
+        });
+        await prisma.mensagem.create({
+            data: {
+                conversaId: atendimento.id,
+                remetente: "cliente",
+                conteudo: "Preciso de ajuda.",
+                status: "recebida",
+            },
+        });
+
+        const resposta = await request(app)
+            .delete(`/api/clientes/${cliente.id}`)
+            .set("Authorization", `Bearer ${tokenAdmin}`);
+
+        expect(resposta.status).toBe(409);
+        expect(resposta.body.erro).toBe("Não é possível excluir: este cliente possui histórico de atendimento.");
+
+        const aindaExiste = await prisma.cliente.findUnique({ where: { id: cliente.id } });
+        expect(aindaExiste).not.toBeNull();
+
+        const atendimentoAindaExiste = await prisma.conversa.findUnique({ where: { id: atendimento.id } });
+        expect(atendimentoAindaExiste).not.toBeNull();
+    });
+
+    test("cliente inexistente retorna 404", async () => {
+        const resposta = await request(app)
+            .delete("/api/clientes/999999")
+            .set("Authorization", `Bearer ${tokenAdmin}`);
+
+        expect(resposta.status).toBe(404);
     });
 });

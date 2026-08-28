@@ -6,6 +6,11 @@ import Paginacao from "../components/Paginacao";
 export default function Clientes() {
     const navigate = useNavigate();
 
+    const usuarioLogado = (() => {
+        const salvo = localStorage.getItem("usuario");
+        return salvo ? JSON.parse(salvo) : null;
+    })();
+
     const [clientes, setClientes] = useState([]);
     const [carregando, setCarregando] = useState(true);
     const [erro, setErro] = useState("");
@@ -71,6 +76,19 @@ export default function Clientes() {
         try {
             await api.patch(`/clientes/${id}`, { nome: edicaoNome, telefone: edicaoTelefone });
             setEditandoId(null);
+            carregarClientes();
+        } catch (error) {
+            alert(error.message);
+        }
+    }
+
+    async function excluirCliente(id) {
+        if (!confirm("Excluir este cliente? Esta ação não pode ser desfeita.")) {
+            return;
+        }
+
+        try {
+            await api.delete(`/clientes/${id}`);
             carregarClientes();
         } catch (error) {
             alert(error.message);
@@ -164,7 +182,10 @@ export default function Clientes() {
                                         <button onClick={() => iniciarEdicao(cliente)}>Editar</button>{" "}
                                         <button onClick={() => criarAtendimentoParaCliente(cliente.id)}>
                                             Novo atendimento
-                                        </button>
+                                        </button>{" "}
+                                        {usuarioLogado?.cargo === "admin" && (
+                                            <button onClick={() => excluirCliente(cliente.id)}>Excluir</button>
+                                        )}
                                     </td>
                                 </>
                             )}
