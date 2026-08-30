@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../services/api";
+import { CHAVE_VISTOS_ATENDIMENTOS, marcarComoVistos } from "../utils/notificacoes";
 import Paginacao from "../components/Paginacao";
 
 const ABAS_STATUS = [
@@ -38,6 +39,22 @@ export default function Atendimentos() {
     useEffect(() => {
         carregarAtendimentos();
     }, [filtroStatus, pagina]);
+
+    // Marca como "visto" tudo que hoje conta pro badge do menu (status
+    // "aguardando"), independente da aba/pagina que o usuario esta vendo -
+    // assim o contador zera ao entrar nesta tela.
+    useEffect(() => {
+        async function marcarVistos() {
+            try {
+                const resposta = await api.get("/atendimentos?status=aguardando&porPagina=100");
+                marcarComoVistos(CHAVE_VISTOS_ATENDIMENTOS, resposta.atendimentos.map((a) => a.id));
+            } catch {
+                // se falhar, so nao zera o badge agora - tenta de novo na proxima visita
+            }
+        }
+
+        marcarVistos();
+    }, []);
 
     function alterarFiltroStatus(valor) {
         setPagina(1);

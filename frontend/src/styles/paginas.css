@@ -226,9 +226,12 @@ button:focus-visible {
 }
 
 .btn-tema {
-    font-size: 16px;
-    padding: 4px 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
     border-color: var(--tema-acento);
+    color: var(--tema-texto);
 }
 
 .btn-tema:hover:not(:disabled) {

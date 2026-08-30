@@ -1,6 +1,12 @@
 import { useEffect, useState } from "react";
 import { Routes, Route, Navigate, NavLink } from "react-router-dom";
 import { api } from "./services/api";
+import {
+    CHAVE_VISTOS_ALERTAS,
+    CHAVE_VISTOS_ATENDIMENTOS,
+    CHAVE_VISTOS_PEDIDOS,
+    contarNaoVistos,
+} from "./utils/notificacoes";
 import Login from "./pages/Login";
 import Atendimentos from "./pages/Atendimentos";
 import AtendimentoDetalhe from "./pages/AtendimentoDetalhe";
@@ -14,6 +20,30 @@ const INTERVALO_CONTADORES_MS = 30000;
 
 function renderContador(valor) {
     return valor > 0 ? <span className="nav-badge">({valor})</span> : null;
+}
+
+function IconeSol() {
+    return (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="4" />
+            <line x1="12" y1="2" x2="12" y2="4" />
+            <line x1="12" y1="20" x2="12" y2="22" />
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+            <line x1="2" y1="12" x2="4" y2="12" />
+            <line x1="20" y1="12" x2="22" y2="12" />
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+        </svg>
+    );
+}
+
+function IconeLua() {
+    return (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M20.354 15.354A9 9 0 0 1 8.646 3.646 9.003 9.003 0 1 0 20.354 15.354z" />
+        </svg>
+    );
 }
 
 function App() {
@@ -51,8 +81,8 @@ function App() {
         async function carregarContadores() {
             const resultados = await Promise.allSettled([
                 api.get("/alertas"),
-                api.get("/atendimentos?status=aguardando&porPagina=1"),
-                api.get("/pedidos?status=aguardando_aprovacao&porPagina=1"),
+                api.get("/atendimentos?status=aguardando&porPagina=100"),
+                api.get("/pedidos?status=aguardando_aprovacao&porPagina=100"),
             ]);
 
             if (cancelado) {
@@ -64,15 +94,21 @@ function App() {
 
                 if (resultados[0].status === "fulfilled") {
                     const { semResponsavel, clienteAguardando } = resultados[0].value.alertas;
-                    novo.alertas = semResponsavel.length + clienteAguardando.length;
+                    const ids = [
+                        ...semResponsavel.map((a) => `sem:${a.atendimentoId}`),
+                        ...clienteAguardando.map((a) => `cli:${a.atendimentoId}`),
+                    ];
+                    novo.alertas = contarNaoVistos(CHAVE_VISTOS_ALERTAS, ids);
                 }
 
                 if (resultados[1].status === "fulfilled") {
-                    novo.atendimentos = resultados[1].value.paginacao.total;
+                    const ids = resultados[1].value.atendimentos.map((a) => a.id);
+                    novo.atendimentos = contarNaoVistos(CHAVE_VISTOS_ATENDIMENTOS, ids);
                 }
 
                 if (resultados[2].status === "fulfilled") {
-                    novo.pedidos = resultados[2].value.paginacao.total;
+                    const ids = resultados[2].value.pedidos.map((p) => p.id);
+                    novo.pedidos = contarNaoVistos(CHAVE_VISTOS_PEDIDOS, ids);
                 }
 
                 return novo;
@@ -140,7 +176,7 @@ function App() {
                 </div>
                 <div>
                     <button onClick={alternarTema} className="btn-tema" aria-label="Alternar tema claro/escuro">
-                        {tema === "dark" ? "☀️" : "🌙"}
+                        {tema === "dark" ? <IconeSol /> : <IconeLua />}
                     </button>{" "}
                     {usuario.nome} ({usuario.cargo}){" "}
                     <button onClick={handleLogout}>Sair</button>

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../services/api";
+import { CHAVE_VISTOS_ALERTAS, marcarComoVistos } from "../utils/notificacoes";
 
 export default function Alertas() {
     const [alertas, setAlertas] = useState({ semResponsavel: [], clienteAguardando: [] });
@@ -14,6 +15,12 @@ export default function Alertas() {
         try {
             const resposta = await api.get("/alertas");
             setAlertas(resposta.alertas);
+
+            const ids = [
+                ...resposta.alertas.semResponsavel.map((a) => `sem:${a.atendimentoId}`),
+                ...resposta.alertas.clienteAguardando.map((a) => `cli:${a.atendimentoId}`),
+            ];
+            marcarComoVistos(CHAVE_VISTOS_ALERTAS, ids);
         } catch (error) {
             setErro(error.message);
         } finally {

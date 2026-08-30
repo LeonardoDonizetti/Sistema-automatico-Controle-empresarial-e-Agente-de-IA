@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../services/api";
+import { CHAVE_VISTOS_PEDIDOS, marcarComoVistos } from "../utils/notificacoes";
 import Paginacao from "../components/Paginacao";
 
 const ABAS_STATUS = [
@@ -40,6 +41,22 @@ export default function Pedidos() {
     useEffect(() => {
         carregarPedidos();
     }, [filtroStatus, pagina]);
+
+    // Marca como "visto" tudo que hoje conta pro badge do menu (status
+    // "aguardando_aprovacao"), independente da aba/pagina que o usuario
+    // esta vendo - assim o contador zera ao entrar nesta tela.
+    useEffect(() => {
+        async function marcarVistos() {
+            try {
+                const resposta = await api.get("/pedidos?status=aguardando_aprovacao&porPagina=100");
+                marcarComoVistos(CHAVE_VISTOS_PEDIDOS, resposta.pedidos.map((p) => p.id));
+            } catch {
+                // se falhar, so nao zera o badge agora - tenta de novo na proxima visita
+            }
+        }
+
+        marcarVistos();
+    }, []);
 
     function alterarFiltroStatus(valor) {
         setPagina(1);
