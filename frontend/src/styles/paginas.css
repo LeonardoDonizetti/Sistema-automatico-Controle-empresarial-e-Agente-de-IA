@@ -25,26 +25,23 @@
     --tema-botao-bg-hover: #e2e5ea;
     --tema-botao-bg-active: #d5d9e0;
 
-    /* Cor de marca (verde-azulado / teal) - identidade do tema claro: logo,
-       link de navegação ativo, botão primário, gradiente do login. GENUÍNA
-       e propositalmente diferente do roxo/índigo do tema escuro (ver bloco
-       [data-theme="dark"]) - não é a mesma cor mais clara/escura, é outra
-       família de cor.
+    /* Cor de marca (verde-azulado / teal) - identidade INTEIRA do tema
+       claro: logo, link de navegação ativo, botão primário, gradiente do
+       login, e também o acento (hovers, bordas de destaque, cabeçalho de
+       tabela, anel de foco) - um único tom, sem nenhum índigo/roxo no
+       tema claro (esse fica só no tema escuro, ver bloco
+       [data-theme="dark"]).
        #0f766e sobre --tema-bg (#e9ecf1): 4.62:1 | sobre --tema-superficie
        (branco): 5.47:1 - ambos >= 4.5:1. */
     --tema-marca: #0f766e;
 
-    /* Cor de acento/apoio (índigo) - hovers, bordas de destaque, fundos
-       sutis, anel de foco. Papel invertido com o tema escuro de propósito:
-       lá o índigo é a marca e o roxo-claro é o acento; aqui o teal é a
-       marca e o índigo vira o acento.
-       #4f46e5 sobre --tema-bg (#e9ecf1): 5.49:1 | sobre --tema-superficie
-       (branco): 6.29:1 - ambos >= 4.5:1. */
-    --tema-acento: #4f46e5;
-    --tema-acento-hover: #4338ca;
-    --tema-acento-active: #3730a3;
-    --tema-acento-bg-suave: rgba(79, 70, 229, 0.08);
-    --tema-foco-anel: rgba(79, 70, 229, 0.35);
+    /* Acento = mesmo teal da marca, sem cor separada (mesmo padrão que o
+       tema escuro já usa com o índigo - ver [data-theme="dark"]). */
+    --tema-acento: #0f766e;
+    --tema-acento-hover: #115e59;
+    --tema-acento-active: #134e4a;
+    --tema-acento-bg-suave: rgba(15, 118, 110, 0.08);
+    --tema-foco-anel: rgba(15, 118, 110, 0.35);
 
     /* Botão primário do tema claro: teal, acompanhando --tema-marca (não é
        mais fixo igual ao tema escuro - ver bloco [data-theme="dark"] pro
@@ -61,8 +58,7 @@
     /* Contraste revalidado contra o novo --tema-bg (#e9ecf1, luminância
        0.8367 vs 1.0 do branco puro):
        texto principal #111827: 14.98:1
-       marca #0f766e (link/borda): 4.62:1
-       acento #4f46e5 (link/borda): 5.49:1
+       marca/acento #0f766e (link/borda): 4.62:1
        borda #64748b: 4.02:1 (continua >= 3:1)
        texto suave #6b7280: 4.08:1 sobre este fundo diretamente - abaixo de
        4.5:1, MAS esse token só é usado em button:disabled (isento da
@@ -98,9 +94,8 @@
        contra este fundo quase-preto (2.84:1). */
     --tema-marca: #818cf8;
 
-    /* Tema escuro mantém o roxo/índigo como acento também (ver nota no
-       bloco :root sobre por que o tema claro usa índigo como acento em vez
-       de teal) - mesmos valores de sempre, sem mudança visual aqui. */
+    /* Tema escuro: acento = mesmo roxo/índigo da marca, sem mudança (mesmo
+       padrão de "uma cor só" que o tema claro usa com teal). */
     --tema-acento: #818cf8;
     --tema-acento-hover: #a5b4fc;
     --tema-acento-active: #c7d2fe;
@@ -169,6 +164,14 @@ button:disabled {
     border-color: var(--tema-borda-suave);
     cursor: not-allowed;
     opacity: 0.6;
+}
+
+/* Substitui o anel de foco padrão do navegador (normalmente azul, fora da
+   paleta) em qualquer botão sem estilo de foco próprio - ex: abas de
+   filtro de status. */
+button:focus-visible {
+    outline: 2px solid var(--tema-acento);
+    outline-offset: 1px;
 }
 
 /* Botão primário: ação principal da tela (criar, salvar, confirmar). */
