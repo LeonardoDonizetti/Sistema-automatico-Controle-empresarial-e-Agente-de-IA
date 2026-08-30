@@ -25,29 +25,33 @@
     --tema-botao-bg-hover: #e2e5ea;
     --tema-botao-bg-active: #d5d9e0;
 
-    /* Cor de marca (índigo) - identidade fixa: logo e link de navegação
-       ativo. Não usar em acentos decorativos (ver --tema-acento abaixo).
-       Contraste validado (WCAG): 6.29:1 sobre branco, 5.49:1 sobre
-       --tema-bg. */
-    --tema-marca: #4f46e5;
-
-    /* Cor de acento/apoio (verde-azulado) - hovers, bordas de destaque,
-       fundos sutis, anel de foco. Diferente do índigo de marca de
-       propósito (ver conversa de design), só no tema claro; o tema escuro
-       mantém o roxo (ver bloco [data-theme="dark"]).
+    /* Cor de marca (verde-azulado / teal) - identidade do tema claro: logo,
+       link de navegação ativo, botão primário, gradiente do login. GENUÍNA
+       e propositalmente diferente do roxo/índigo do tema escuro (ver bloco
+       [data-theme="dark"]) - não é a mesma cor mais clara/escura, é outra
+       família de cor.
        #0f766e sobre --tema-bg (#e9ecf1): 4.62:1 | sobre --tema-superficie
        (branco): 5.47:1 - ambos >= 4.5:1. */
-    --tema-acento: #0f766e;
-    --tema-acento-hover: #115e59;
-    --tema-acento-active: #134e4a;
-    --tema-acento-bg-suave: rgba(15, 118, 110, 0.08);
-    --tema-foco-anel: rgba(15, 118, 110, 0.35);
+    --tema-marca: #0f766e;
 
-    /* Botão primário: mesmo par fundo/texto nos dois temas (não depende do
-       fundo da página). 6.29 / 7.91 / 9.93 : 1 com texto branco. */
-    --tema-botao-primario-bg: #4f46e5;
-    --tema-botao-primario-bg-hover: #4338ca;
-    --tema-botao-primario-bg-active: #3730a3;
+    /* Cor de acento/apoio (índigo) - hovers, bordas de destaque, fundos
+       sutis, anel de foco. Papel invertido com o tema escuro de propósito:
+       lá o índigo é a marca e o roxo-claro é o acento; aqui o teal é a
+       marca e o índigo vira o acento.
+       #4f46e5 sobre --tema-bg (#e9ecf1): 5.49:1 | sobre --tema-superficie
+       (branco): 6.29:1 - ambos >= 4.5:1. */
+    --tema-acento: #4f46e5;
+    --tema-acento-hover: #4338ca;
+    --tema-acento-active: #3730a3;
+    --tema-acento-bg-suave: rgba(79, 70, 229, 0.08);
+    --tema-foco-anel: rgba(79, 70, 229, 0.35);
+
+    /* Botão primário do tema claro: teal, acompanhando --tema-marca (não é
+       mais fixo igual ao tema escuro - ver bloco [data-theme="dark"] pro
+       par próprio de lá). 5.47 / 7.58 / 9.48 : 1 com texto branco. */
+    --tema-botao-primario-bg: #0f766e;
+    --tema-botao-primario-bg-hover: #115e59;
+    --tema-botao-primario-bg-active: #134e4a;
     --tema-botao-primario-texto: #ffffff;
 
     /* Estado de erro em campo de formulário. Borda validada >=3:1. */
@@ -57,7 +61,8 @@
     /* Contraste revalidado contra o novo --tema-bg (#e9ecf1, luminância
        0.8367 vs 1.0 do branco puro):
        texto principal #111827: 14.98:1
-       marca #4f46e5 (link/borda): 5.49:1
+       marca #0f766e (link/borda): 4.62:1
+       acento #4f46e5 (link/borda): 5.49:1
        borda #64748b: 4.02:1 (continua >= 3:1)
        texto suave #6b7280: 4.08:1 sobre este fundo diretamente - abaixo de
        4.5:1, MAS esse token só é usado em button:disabled (isento da
@@ -87,21 +92,24 @@
     --tema-botao-bg-hover: #2f323f;
     --tema-botao-bg-active: #383c4b;
 
-    /* Tons mais claros que no tema claro: o índigo escuro (#4f46e5) não
-       passa no contraste contra este fundo quase-preto (2.84:1). */
+    /* Roxo/índigo mantido sem mudança - identidade própria do tema escuro,
+       deliberadamente diferente do teal do tema claro (ver bloco :root).
+       Tom claro porque o índigo escuro (#4f46e5) não passa no contraste
+       contra este fundo quase-preto (2.84:1). */
     --tema-marca: #818cf8;
 
     /* Tema escuro mantém o roxo/índigo como acento também (ver nota no
-       bloco :root sobre por que o tema claro usa verde-azulado em vez
-       disso) - mesmos valores de sempre, sem mudança visual aqui. */
+       bloco :root sobre por que o tema claro usa índigo como acento em vez
+       de teal) - mesmos valores de sempre, sem mudança visual aqui. */
     --tema-acento: #818cf8;
     --tema-acento-hover: #a5b4fc;
     --tema-acento-active: #c7d2fe;
     --tema-acento-bg-suave: rgba(129, 140, 248, 0.14);
     --tema-foco-anel: rgba(129, 140, 248, 0.4);
 
-    /* Botão primário: mesmo par fundo/texto do tema claro (contraste não
-       depende do fundo da página, só do próprio botão). */
+    /* Botão primário do tema escuro: roxo/índigo mantido sem mudança
+       (contraste não depende do fundo da página, só do próprio botão).
+       6.29 / 7.91 / 9.93 : 1 com texto branco. */
     --tema-botao-primario-bg: #4f46e5;
     --tema-botao-primario-bg-hover: #4338ca;
     --tema-botao-primario-bg-active: #3730a3;
@@ -418,8 +426,10 @@ textarea:focus {
     flex-wrap: wrap;
 }
 
-/* Cor fixa nos dois temas (não usa --tema-marca, que no tema escuro vira um
-   tom claro pensado pra texto — aqui a marca é o FUNDO, com texto branco). */
+/* Usa o par de botão primário (não --tema-marca direto, que no tema
+   escuro é um tom claro pensado pra texto, não pra fundo com texto
+   branco). Cada tema pega sua própria cor: teal no claro, índigo no
+   escuro (ver blocos :root e [data-theme="dark"]). */
 .login-painel {
     flex: 1 1 380px;
     min-height: 240px;
