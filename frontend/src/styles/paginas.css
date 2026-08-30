@@ -25,13 +25,23 @@
     --tema-botao-bg-hover: #e2e5ea;
     --tema-botao-bg-active: #d5d9e0;
 
-    /* Cor de marca (índigo). Usada em links, bordas de foco/destaque e
-       fundos sutis. Contraste validado (WCAG): 6.29:1 sobre branco. */
+    /* Cor de marca (índigo) - identidade fixa: logo e link de navegação
+       ativo. Não usar em acentos decorativos (ver --tema-acento abaixo).
+       Contraste validado (WCAG): 6.29:1 sobre branco, 5.49:1 sobre
+       --tema-bg. */
     --tema-marca: #4f46e5;
-    --tema-marca-hover: #4338ca;
-    --tema-marca-active: #3730a3;
-    --tema-marca-bg-suave: rgba(79, 70, 229, 0.08);
-    --tema-foco-anel: rgba(79, 70, 229, 0.35);
+
+    /* Cor de acento/apoio (verde-azulado) - hovers, bordas de destaque,
+       fundos sutis, anel de foco. Diferente do índigo de marca de
+       propósito (ver conversa de design), só no tema claro; o tema escuro
+       mantém o roxo (ver bloco [data-theme="dark"]).
+       #0f766e sobre --tema-bg (#e9ecf1): 4.62:1 | sobre --tema-superficie
+       (branco): 5.47:1 - ambos >= 4.5:1. */
+    --tema-acento: #0f766e;
+    --tema-acento-hover: #115e59;
+    --tema-acento-active: #134e4a;
+    --tema-acento-bg-suave: rgba(15, 118, 110, 0.08);
+    --tema-foco-anel: rgba(15, 118, 110, 0.35);
 
     /* Botão primário: mesmo par fundo/texto nos dois temas (não depende do
        fundo da página). 6.29 / 7.91 / 9.93 : 1 com texto branco. */
@@ -80,9 +90,14 @@
     /* Tons mais claros que no tema claro: o índigo escuro (#4f46e5) não
        passa no contraste contra este fundo quase-preto (2.84:1). */
     --tema-marca: #818cf8;
-    --tema-marca-hover: #a5b4fc;
-    --tema-marca-active: #c7d2fe;
-    --tema-marca-bg-suave: rgba(129, 140, 248, 0.14);
+
+    /* Tema escuro mantém o roxo/índigo como acento também (ver nota no
+       bloco :root sobre por que o tema claro usa verde-azulado em vez
+       disso) - mesmos valores de sempre, sem mudança visual aqui. */
+    --tema-acento: #818cf8;
+    --tema-acento-hover: #a5b4fc;
+    --tema-acento-active: #c7d2fe;
+    --tema-acento-bg-suave: rgba(129, 140, 248, 0.14);
     --tema-foco-anel: rgba(129, 140, 248, 0.4);
 
     /* Botão primário: mesmo par fundo/texto do tema claro (contraste não
@@ -169,29 +184,29 @@ button:disabled {
 /* Botão secundário: ação neutra mas com identidade (cancelar, editar) —
    contorno na cor de marca em vez do cinza puro do botão padrão. */
 .btn-secundario {
-    color: var(--tema-marca);
+    color: var(--tema-acento);
     background-color: var(--tema-bg);
-    border: 1px solid var(--tema-marca);
+    border: 1px solid var(--tema-acento);
 }
 
 .btn-secundario:hover:not(:disabled) {
-    background-color: var(--tema-marca-bg-suave);
+    background-color: var(--tema-acento-bg-suave);
 }
 
 .btn-secundario:active:not(:disabled) {
-    background-color: var(--tema-marca-bg-suave);
-    border-color: var(--tema-marca-hover);
-    color: var(--tema-marca-hover);
+    background-color: var(--tema-acento-bg-suave);
+    border-color: var(--tema-acento-hover);
+    color: var(--tema-acento-hover);
 }
 
 .btn-tema {
     font-size: 16px;
     padding: 4px 8px;
-    border-color: var(--tema-marca);
+    border-color: var(--tema-acento);
 }
 
 .btn-tema:hover:not(:disabled) {
-    background-color: var(--tema-marca-bg-suave);
+    background-color: var(--tema-acento-bg-suave);
 }
 
 .page {
@@ -282,7 +297,7 @@ input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type=
 select:focus,
 textarea:focus {
     outline: none;
-    border-color: var(--tema-marca);
+    border-color: var(--tema-acento);
     box-shadow: 0 0 0 3px var(--tema-foco-anel);
 }
 
@@ -317,8 +332,8 @@ textarea:focus {
 
 .data-table thead tr {
     text-align: left;
-    background-color: var(--tema-marca-bg-suave);
-    border-bottom: 2px solid var(--tema-marca);
+    background-color: var(--tema-acento-bg-suave);
+    border-bottom: 2px solid var(--tema-acento);
 }
 
 .data-table th,
@@ -500,11 +515,11 @@ textarea:focus {
 
 .card {
     border: 1px solid var(--tema-borda);
-    border-top: 3px solid var(--tema-marca);
+    border-top: 3px solid var(--tema-acento);
     border-radius: 8px;
     padding: 16px;
     min-width: 160px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 2px 8px var(--tema-marca-bg-suave);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 2px 8px var(--tema-acento-bg-suave);
     background-color: var(--tema-superficie);
 }
 
@@ -573,11 +588,11 @@ textarea:focus {
 
 .order-card {
     border: 1px solid var(--tema-borda);
-    border-left: 3px solid var(--tema-marca);
+    border-left: 3px solid var(--tema-acento);
     border-radius: 4px;
     padding: 12px;
     margin-bottom: 12px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 4px var(--tema-marca-bg-suave);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 4px var(--tema-acento-bg-suave);
     background-color: var(--tema-superficie);
 }
 
