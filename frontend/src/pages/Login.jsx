@@ -26,33 +26,46 @@ export default function Login({ aoLogar }) {
     }
 
     return (
-        <div className="login-container">
-            <h1 className="login-titulo">Sistema de Atendimento</h1>
-            <form onSubmit={handleSubmit}>
-                <div className="form-group">
-                    <label>E-mail</label>
-                    <input
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
-                        className={`input-block${erro ? " campo-invalido" : ""}`}
-                    />
+        <div className="login-page">
+            <div className="login-painel">
+                <div className="login-painel-conteudo">
+                    <h1 className="login-painel-titulo">Sistema de Atendimento</h1>
+                    <p className="login-painel-subtitulo">
+                        Clientes, atendimentos e pedidos organizados em um só lugar.
+                    </p>
                 </div>
-                <div className="form-group">
-                    <label>Senha</label>
-                    <CampoSenha
-                        value={senha}
-                        onChange={(e) => setSenha(e.target.value)}
-                        required
-                        className={`input-block${erro ? " campo-invalido" : ""}`}
-                    />
+            </div>
+
+            <div className="login-formulario-area">
+                <div className="login-container">
+                    <h2 className="login-titulo">Entrar</h2>
+                    <form onSubmit={handleSubmit}>
+                        <div className="form-group">
+                            <label>E-mail</label>
+                            <input
+                                type="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                required
+                                className={`input-block${erro ? " campo-invalido" : ""}`}
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label>Senha</label>
+                            <CampoSenha
+                                value={senha}
+                                onChange={(e) => setSenha(e.target.value)}
+                                required
+                                className={`input-block${erro ? " campo-invalido" : ""}`}
+                            />
+                        </div>
+                        {erro && <p className="error-text">{erro}</p>}
+                        <button type="submit" disabled={carregando} className="btn-block btn-primario">
+                            {carregando ? "Entrando..." : "Entrar"}
+                        </button>
+                    </form>
                 </div>
-                {erro && <p className="error-text">{erro}</p>}
-                <button type="submit" disabled={carregando} className="btn-block btn-primario">
-                    {carregando ? "Entrando..." : "Entrar"}
-                </button>
-            </form>
+            </div>
         </div>
     );
 }
