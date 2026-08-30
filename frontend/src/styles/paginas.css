@@ -41,6 +41,10 @@
     --tema-acento-hover: #115e59;
     --tema-acento-active: #134e4a;
     --tema-acento-bg-suave: rgba(15, 118, 110, 0.08);
+    /* Só pro cabeçalho de tabela: opacidade maior que --tema-acento-bg-suave
+       pra ter a mesma presença visual que o tema escuro já tem ali (lá o
+       tom claro sobre fundo quase-preto já contrasta mais por natureza). */
+    --tema-acento-bg-tabela: rgba(15, 118, 110, 0.16);
     --tema-foco-anel: rgba(15, 118, 110, 0.35);
 
     /* Botão primário do tema claro: teal, acompanhando --tema-marca (não é
@@ -109,6 +113,8 @@
     --tema-acento-hover: #a5b4fc;
     --tema-acento-active: #c7d2fe;
     --tema-acento-bg-suave: rgba(129, 140, 248, 0.14);
+    /* Já tinha presença boa aqui - mesmo valor do bg-suave, sem mudança. */
+    --tema-acento-bg-tabela: rgba(129, 140, 248, 0.14);
     --tema-foco-anel: rgba(129, 140, 248, 0.4);
 
     /* Botão primário do tema escuro: roxo/índigo mantido sem mudança
@@ -367,7 +373,7 @@ textarea:focus {
 
 .data-table thead tr {
     text-align: left;
-    background-color: var(--tema-acento-bg-suave);
+    background-color: var(--tema-acento-bg-tabela);
     border-bottom: 2px solid var(--tema-acento);
 }
 
