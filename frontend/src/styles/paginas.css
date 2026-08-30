@@ -129,6 +129,42 @@ button:disabled {
     opacity: 0.6;
 }
 
+/* Botão primário: ação principal da tela (criar, salvar, confirmar). */
+.btn-primario {
+    color: var(--tema-botao-primario-texto);
+    background-color: var(--tema-botao-primario-bg);
+    border: 1px solid var(--tema-botao-primario-bg);
+    font-weight: 600;
+}
+
+.btn-primario:hover:not(:disabled) {
+    background-color: var(--tema-botao-primario-bg-hover);
+    border-color: var(--tema-botao-primario-bg-hover);
+}
+
+.btn-primario:active:not(:disabled) {
+    background-color: var(--tema-botao-primario-bg-active);
+    border-color: var(--tema-botao-primario-bg-active);
+}
+
+/* Botão secundário: ação neutra mas com identidade (cancelar, editar) —
+   contorno na cor de marca em vez do cinza puro do botão padrão. */
+.btn-secundario {
+    color: var(--tema-marca);
+    background-color: var(--tema-bg);
+    border: 1px solid var(--tema-marca);
+}
+
+.btn-secundario:hover:not(:disabled) {
+    background-color: var(--tema-marca-bg-suave);
+}
+
+.btn-secundario:active:not(:disabled) {
+    background-color: var(--tema-marca-bg-suave);
+    border-color: var(--tema-marca-hover);
+    color: var(--tema-marca-hover);
+}
+
 .btn-tema {
     font-size: 16px;
     padding: 4px 8px;
@@ -206,16 +242,48 @@ button:disabled {
     flex-wrap: wrap;
 }
 
+/* Estilo consistente de campo pra todos os inputs de texto, select e
+   textarea do sistema (exclui checkbox/radio/submit/button, que não usam
+   esse tipo de moldura). */
+input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]),
+select,
+textarea {
+    font-family: var(--fonte-base);
+    font-size: 14px;
+    color: var(--tema-texto);
+    background-color: var(--tema-bg);
+    border: 1px solid var(--tema-borda);
+    border-radius: 6px;
+    padding: 8px 12px;
+    box-sizing: border-box;
+}
+
+input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border-color: var(--tema-marca);
+    box-shadow: 0 0 0 3px var(--tema-foco-anel);
+}
+
+.campo-invalido {
+    border-color: var(--tema-erro) !important;
+}
+
+.campo-invalido:focus {
+    box-shadow: 0 0 0 3px var(--tema-erro-bg-suave);
+}
+
 .form-input {
-    padding: 8px;
+    padding: 8px 12px;
 }
 
 .edit-input {
-    padding: 4px;
+    padding: 6px 10px;
 }
 
 .edit-input-block {
-    padding: 4px;
+    padding: 6px 10px;
     margin-bottom: 4px;
     display: block;
 }

@@ -36,7 +36,7 @@ export default function Login({ aoLogar }) {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         required
-                        className="input-block"
+                        className={`input-block${erro ? " campo-invalido" : ""}`}
                     />
                 </div>
                 <div className="form-group">
@@ -45,11 +45,11 @@ export default function Login({ aoLogar }) {
                         value={senha}
                         onChange={(e) => setSenha(e.target.value)}
                         required
-                        className="input-block"
+                        className={`input-block${erro ? " campo-invalido" : ""}`}
                     />
                 </div>
                 {erro && <p className="error-text">{erro}</p>}
-                <button type="submit" disabled={carregando} className="btn-block">
+                <button type="submit" disabled={carregando} className="btn-block btn-primario">
                     {carregando ? "Entrando..." : "Entrar"}
                 </button>
             </form>

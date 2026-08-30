@@ -120,7 +120,10 @@ export default function Usuarios() {
         <div className="page">
             <h2>Usuários</h2>
 
-            <button onClick={() => setMostrarFormNovo(!mostrarFormNovo)} className="btn-toggle">
+            <button
+                onClick={() => setMostrarFormNovo(!mostrarFormNovo)}
+                className={`btn-toggle ${mostrarFormNovo ? "btn-secundario" : "btn-primario"}`}
+            >
                 {mostrarFormNovo ? "Cancelar" : "+ Novo usuário"}
             </button>
 
@@ -154,7 +157,7 @@ export default function Usuarios() {
                         <option value="atendente">Atendente</option>
                         <option value="admin">Admin</option>
                     </select>
-                    <button type="submit" disabled={salvandoNovo}>
+                    <button type="submit" disabled={salvandoNovo} className="btn-primario">
                         Salvar
                     </button>
                 </form>
@@ -216,8 +219,12 @@ export default function Usuarios() {
                                             minLength={12}
                                             className="edit-input-block"
                                         />
-                                        <button onClick={() => salvarEdicao(usuario.id)}>Salvar</button>{" "}
-                                        <button onClick={cancelarEdicao}>Cancelar</button>
+                                        <button onClick={() => salvarEdicao(usuario.id)} className="btn-primario">
+                                            Salvar
+                                        </button>{" "}
+                                        <button onClick={cancelarEdicao} className="btn-secundario">
+                                            Cancelar
+                                        </button>
                                     </td>
                                 </>
                             ) : (
@@ -232,7 +239,9 @@ export default function Usuarios() {
                                         </span>
                                     </td>
                                     <td>
-                                        <button onClick={() => iniciarEdicao(usuario)}>Editar</button>{" "}
+                                        <button onClick={() => iniciarEdicao(usuario)} className="btn-secundario">
+                                            Editar
+                                        </button>{" "}
                                         {usuario.ativo && usuario.id !== usuarioLogado?.id && (
                                             <button onClick={() => inativarUsuario(usuario.id)}>Inativar</button>
                                         )}

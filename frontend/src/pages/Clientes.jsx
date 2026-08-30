@@ -108,7 +108,10 @@ export default function Clientes() {
         <div className="page">
             <h2>Clientes</h2>
 
-            <button onClick={() => setMostrarFormNovo(!mostrarFormNovo)} className="btn-toggle">
+            <button
+                onClick={() => setMostrarFormNovo(!mostrarFormNovo)}
+                className={`btn-toggle ${mostrarFormNovo ? "btn-secundario" : "btn-primario"}`}
+            >
                 {mostrarFormNovo ? "Cancelar" : "+ Novo cliente"}
             </button>
 
@@ -130,7 +133,7 @@ export default function Clientes() {
                         required
                         className="form-input"
                     />
-                    <button type="submit" disabled={salvandoNovo}>
+                    <button type="submit" disabled={salvandoNovo} className="btn-primario">
                         Salvar
                     </button>
                 </form>
@@ -169,8 +172,12 @@ export default function Clientes() {
                                         />
                                     </td>
                                     <td>
-                                        <button onClick={() => salvarEdicao(cliente.id)}>Salvar</button>{" "}
-                                        <button onClick={cancelarEdicao}>Cancelar</button>
+                                        <button onClick={() => salvarEdicao(cliente.id)} className="btn-primario">
+                                            Salvar
+                                        </button>{" "}
+                                        <button onClick={cancelarEdicao} className="btn-secundario">
+                                            Cancelar
+                                        </button>
                                     </td>
                                 </>
                             ) : (
@@ -179,8 +186,13 @@ export default function Clientes() {
                                     <td>{cliente.nome}</td>
                                     <td>{cliente.telefone}</td>
                                     <td>
-                                        <button onClick={() => iniciarEdicao(cliente)}>Editar</button>{" "}
-                                        <button onClick={() => criarAtendimentoParaCliente(cliente.id)}>
+                                        <button onClick={() => iniciarEdicao(cliente)} className="btn-secundario">
+                                            Editar
+                                        </button>{" "}
+                                        <button
+                                            onClick={() => criarAtendimentoParaCliente(cliente.id)}
+                                            className="btn-primario"
+                                        >
                                             Novo atendimento
                                         </button>{" "}
                                         {usuarioLogado?.cargo === "admin" && (

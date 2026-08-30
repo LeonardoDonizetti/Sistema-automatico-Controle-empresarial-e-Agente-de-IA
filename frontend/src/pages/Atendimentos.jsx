@@ -109,7 +109,10 @@ export default function Atendimentos() {
                             <td>{atendimento.atendente?.nome || "-"}</td>
                             <td>
                                 {!atendimento.atendenteId && (
-                                    <button onClick={(e) => assumirAtendimento(atendimento.id, e)}>
+                                    <button
+                                        onClick={(e) => assumirAtendimento(atendimento.id, e)}
+                                        className="btn-primario"
+                                    >
                                         Assumir
                                     </button>
                                 )}

@@ -281,7 +281,7 @@ export default function AtendimentoDetalhe() {
                     placeholder="Digite uma mensagem..."
                     className="message-input"
                 />
-                <button type="submit" disabled={enviando}>
+                <button type="submit" disabled={enviando} className="btn-primario">
                     Enviar
                 </button>
             </form>
@@ -347,7 +347,7 @@ export default function AtendimentoDetalhe() {
                                     <button
                                         type="button"
                                         onClick={() => alternarEdicaoPedido(pedido.id)}
-                                        className="btn-mb"
+                                        className={`btn-mb ${editando ? "btn-primario" : "btn-secundario"}`}
                                     >
                                         {editando ? "Concluir edição" : "Editar itens"}
                                     </button>
@@ -390,7 +390,9 @@ export default function AtendimentoDetalhe() {
                                             required
                                             className="flex-1-padded"
                                         />
-                                        <button type="submit">Adicionar item</button>
+                                        <button type="submit" className="btn-primario">
+                                            Adicionar item
+                                        </button>
                                     </form>
                                 )}
                                 <div>
@@ -410,7 +412,10 @@ export default function AtendimentoDetalhe() {
                 );
             })}
 
-            <button onClick={() => setMostrarFormPedido(!mostrarFormPedido)} className="btn-mb">
+            <button
+                onClick={() => setMostrarFormPedido(!mostrarFormPedido)}
+                className={`btn-mb ${mostrarFormPedido ? "btn-secundario" : "btn-primario"}`}
+            >
                 {mostrarFormPedido ? "Cancelar" : "+ Novo pedido"}
             </button>
 
@@ -456,7 +461,7 @@ export default function AtendimentoDetalhe() {
                         + Adicionar item
                     </button>
                     <div>
-                        <button type="submit" disabled={salvandoPedido}>
+                        <button type="submit" disabled={salvandoPedido} className="btn-primario">
                             Criar pedido
                         </button>
                     </div>
