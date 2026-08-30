@@ -3,7 +3,12 @@
 
     --fonte-base: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 
-    --tema-bg: #ffffff;
+    /* Fundo "chão" da página, levemente quebrado (não branco puro) pra dar
+       profundidade. Contraste revalidado com este tom (ver notas abaixo). */
+    --tema-bg: #f8f9fb;
+    /* Fundo "superfície": cards, tabelas, painéis e campos de formulário -
+       um branco mais puro que flutua sobre o --tema-bg. */
+    --tema-superficie: #ffffff;
     --tema-texto: #111827;
     --tema-texto-titulo: #111827;
     --tema-borda: #64748b;
@@ -37,12 +42,21 @@
     /* Estado de erro em campo de formulário. Borda validada >=3:1. */
     --tema-erro: #dc2626;
     --tema-erro-bg-suave: rgba(220, 38, 38, 0.08);
+
+    /* Contraste revalidado contra o novo --tema-bg (#f8f9fb, luminância
+       0.9467 vs 1.0 do branco puro anterior):
+       texto principal #111827: 16.84:1 (era ~18.9:1)
+       texto suave #6b7280: 4.59:1 (era 4.83:1 - continua >= 4.5:1)
+       marca #4f46e5 (link/borda): 5.97:1 (era 6.29:1)
+       borda #64748b: 4.52:1 (era 4.76:1 - continua >= 3:1) */
 }
 
 :root[data-theme="dark"] {
     color-scheme: dark;
 
     --tema-bg: #16171d;
+    /* Tema escuro não muda: superfície = mesmo fundo, sem distinção. */
+    --tema-superficie: var(--tema-bg);
     --tema-texto: #d1d5db;
     --tema-texto-titulo: #f3f4f6;
     --tema-borda: #626b80;
@@ -236,6 +250,7 @@ button:disabled {
     padding: 12px;
     border: 1px solid var(--tema-borda);
     border-radius: 4px;
+    background-color: var(--tema-superficie);
 }
 
 .form-inline--wrap {
@@ -251,7 +266,7 @@ textarea {
     font-family: var(--fonte-base);
     font-size: 14px;
     color: var(--tema-texto);
-    background-color: var(--tema-bg);
+    background-color: var(--tema-superficie);
     border: 1px solid var(--tema-borda);
     border-radius: 6px;
     padding: 8px 12px;
@@ -291,6 +306,7 @@ textarea:focus {
 .data-table {
     width: 100%;
     border-collapse: collapse;
+    background-color: var(--tema-superficie);
 }
 
 .data-table thead tr {
@@ -483,6 +499,7 @@ textarea:focus {
     padding: 16px;
     min-width: 160px;
     box-shadow: 0 2px 8px var(--tema-marca-bg-suave);
+    background-color: var(--tema-superficie);
 }
 
 .card-value {
@@ -503,6 +520,7 @@ textarea:focus {
     max-height: 300px;
     overflow-y: auto;
     margin-bottom: 12px;
+    background-color: var(--tema-superficie);
 }
 
 .message-row {
@@ -554,6 +572,7 @@ textarea:focus {
     padding: 12px;
     margin-bottom: 12px;
     box-shadow: 0 1px 4px var(--tema-marca-bg-suave);
+    background-color: var(--tema-superficie);
 }
 
 .order-form {
@@ -561,6 +580,7 @@ textarea:focus {
     border-radius: 4px;
     padding: 12px;
     margin-bottom: 24px;
+    background-color: var(--tema-superficie);
 }
 
 .order-item-row {
