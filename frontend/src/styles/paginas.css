@@ -18,6 +18,25 @@
     --tema-botao-bg: #eef0f3;
     --tema-botao-bg-hover: #e2e5ea;
     --tema-botao-bg-active: #d5d9e0;
+
+    /* Cor de marca (índigo). Usada em links, bordas de foco/destaque e
+       fundos sutis. Contraste validado (WCAG): 6.29:1 sobre branco. */
+    --tema-marca: #4f46e5;
+    --tema-marca-hover: #4338ca;
+    --tema-marca-active: #3730a3;
+    --tema-marca-bg-suave: rgba(79, 70, 229, 0.08);
+    --tema-foco-anel: rgba(79, 70, 229, 0.35);
+
+    /* Botão primário: mesmo par fundo/texto nos dois temas (não depende do
+       fundo da página). 6.29 / 7.91 / 9.93 : 1 com texto branco. */
+    --tema-botao-primario-bg: #4f46e5;
+    --tema-botao-primario-bg-hover: #4338ca;
+    --tema-botao-primario-bg-active: #3730a3;
+    --tema-botao-primario-texto: #ffffff;
+
+    /* Estado de erro em campo de formulário. Borda validada >=3:1. */
+    --tema-erro: #dc2626;
+    --tema-erro-bg-suave: rgba(220, 38, 38, 0.08);
 }
 
 :root[data-theme="dark"] {
@@ -38,6 +57,24 @@
     --tema-botao-bg: #262832;
     --tema-botao-bg-hover: #2f323f;
     --tema-botao-bg-active: #383c4b;
+
+    /* Tons mais claros que no tema claro: o índigo escuro (#4f46e5) não
+       passa no contraste contra este fundo quase-preto (2.84:1). */
+    --tema-marca: #818cf8;
+    --tema-marca-hover: #a5b4fc;
+    --tema-marca-active: #c7d2fe;
+    --tema-marca-bg-suave: rgba(129, 140, 248, 0.14);
+    --tema-foco-anel: rgba(129, 140, 248, 0.4);
+
+    /* Botão primário: mesmo par fundo/texto do tema claro (contraste não
+       depende do fundo da página, só do próprio botão). */
+    --tema-botao-primario-bg: #4f46e5;
+    --tema-botao-primario-bg-hover: #4338ca;
+    --tema-botao-primario-bg-active: #3730a3;
+    --tema-botao-primario-texto: #ffffff;
+
+    --tema-erro: #f87171;
+    --tema-erro-bg-suave: rgba(248, 113, 113, 0.12);
 }
 
 body {
