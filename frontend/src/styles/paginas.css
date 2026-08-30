@@ -3,9 +3,10 @@
 
     --fonte-base: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 
-    /* Fundo "chão" da página, levemente quebrado (não branco puro) pra dar
-       profundidade. Contraste revalidado com este tom (ver notas abaixo). */
-    --tema-bg: #f8f9fb;
+    /* Fundo "chão" da página, quebrado o suficiente pra ser perceptível a
+       olho nu (~11% menos luminoso que branco puro). Contraste revalidado
+       com este tom (ver notas abaixo). */
+    --tema-bg: #e9ecf1;
     /* Fundo "superfície": cards, tabelas, painéis e campos de formulário -
        um branco mais puro que flutua sobre o --tema-bg. */
     --tema-superficie: #ffffff;
@@ -43,12 +44,16 @@
     --tema-erro: #dc2626;
     --tema-erro-bg-suave: rgba(220, 38, 38, 0.08);
 
-    /* Contraste revalidado contra o novo --tema-bg (#f8f9fb, luminância
-       0.9467 vs 1.0 do branco puro anterior):
-       texto principal #111827: 16.84:1 (era ~18.9:1)
-       texto suave #6b7280: 4.59:1 (era 4.83:1 - continua >= 4.5:1)
-       marca #4f46e5 (link/borda): 5.97:1 (era 6.29:1)
-       borda #64748b: 4.52:1 (era 4.76:1 - continua >= 3:1) */
+    /* Contraste revalidado contra o novo --tema-bg (#e9ecf1, luminância
+       0.8367 vs 1.0 do branco puro):
+       texto principal #111827: 14.98:1
+       marca #4f46e5 (link/borda): 5.49:1
+       borda #64748b: 4.02:1 (continua >= 3:1)
+       texto suave #6b7280: 4.08:1 sobre este fundo diretamente - abaixo de
+       4.5:1, MAS esse token só é usado em button:disabled (isento da
+       exigência de contraste pelo WCAG 1.4.3) e em .message-meta, que fica
+       dentro de .messages-box com --tema-superficie (branco, 4.83:1) - ou
+       seja, nenhum texto ativo real renderiza com esse contraste. */
 }
 
 :root[data-theme="dark"] {
@@ -307,6 +312,7 @@ textarea:focus {
     width: 100%;
     border-collapse: collapse;
     background-color: var(--tema-superficie);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
 .data-table thead tr {
@@ -498,7 +504,7 @@ textarea:focus {
     border-radius: 8px;
     padding: 16px;
     min-width: 160px;
-    box-shadow: 0 2px 8px var(--tema-marca-bg-suave);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 2px 8px var(--tema-marca-bg-suave);
     background-color: var(--tema-superficie);
 }
 
@@ -571,7 +577,7 @@ textarea:focus {
     border-radius: 4px;
     padding: 12px;
     margin-bottom: 12px;
-    box-shadow: 0 1px 4px var(--tema-marca-bg-suave);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 4px var(--tema-marca-bg-suave);
     background-color: var(--tema-superficie);
 }
 
