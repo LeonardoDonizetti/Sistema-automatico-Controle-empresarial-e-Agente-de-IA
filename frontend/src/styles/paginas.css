@@ -477,7 +477,10 @@ textarea:focus {
 }
 
 .login-painel-conteudo {
-    max-width: 360px;
+    /* 440px: "Sistema de Atendimento" em 32px/700 precisa de ~356px numa
+       linha só - 360px (valor antigo) dava margem quase zero e qualquer
+       diferença de subpixel/kerning já forçava a quebra de linha. */
+    max-width: 440px;
 }
 
 .login-painel-titulo {
@@ -487,6 +490,7 @@ textarea:focus {
     letter-spacing: -0.02em;
     line-height: 1.3;
     margin: 0 0 16px;
+    white-space: nowrap;
 }
 
 .login-painel-subtitulo {
@@ -496,6 +500,26 @@ textarea:focus {
     font-weight: 500;
     line-height: 1.6;
     margin: 0;
+    /* Pode quebrar linha (só em espaço, comportamento padrão), diferente
+       do título - ver .login-painel-titulo. */
+}
+
+/* Telas estreitas (celular): o painel deixa de ter 380px+ de largura
+   (flex-wrap empilha em 100% da tela), então o título em nowrap a 32px
+   pode não caber. Reduz fonte e padding pra manter uma linha só sem
+   estourar a largura. */
+@media (max-width: 480px) {
+    .login-painel {
+        padding: 32px 24px;
+    }
+
+    .login-painel-titulo {
+        font-size: 24px;
+    }
+
+    .login-painel-subtitulo {
+        font-size: 14px;
+    }
 }
 
 .login-formulario-area {
