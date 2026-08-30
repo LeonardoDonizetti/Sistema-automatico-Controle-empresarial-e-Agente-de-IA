@@ -42,16 +42,6 @@ async function metricas(req, res) {
             };
         });
 
-        const porSetor = await prisma.conversa.groupBy({
-            by: ["setor"],
-            _count: { _all: true },
-        });
-
-        const atendimentosPorSetor = porSetor.map((item) => ({
-            setor: item.setor || "sem setor",
-            total: item._count._all,
-        }));
-
         const resolvidos = await prisma.conversa.findMany({
             where: { status: { in: ["resolvido", "fechado"] } },
             select: { criadoEm: true, atualizadoEm: true },
@@ -72,7 +62,6 @@ async function metricas(req, res) {
             totalAtendimentos,
             porStatus: contagemPorStatus,
             atendimentosPorFuncionario,
-            atendimentosPorSetor,
             tempoMedioAtendimentoMinutos,
         });
     } catch (error) {

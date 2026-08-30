@@ -70,18 +70,6 @@ export default function Dashboard() {
                         ))}
                     </ul>
                 </div>
-
-                <div>
-                    <h3>Por setor</h3>
-                    {metricas.atendimentosPorSetor.length === 0 && <p>Sem dados.</p>}
-                    <ul>
-                        {metricas.atendimentosPorSetor.map((item) => (
-                            <li key={item.setor}>
-                                {item.setor}: {item.total}
-                            </li>
-                        ))}
-                    </ul>
-                </div>
             </div>
         </div>
     );
