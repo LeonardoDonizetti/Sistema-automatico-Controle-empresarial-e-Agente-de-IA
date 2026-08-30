@@ -55,6 +55,15 @@
     --tema-erro: #dc2626;
     --tema-erro-bg-suave: rgba(220, 38, 38, 0.08);
 
+    /* Badge de notificação (contador nas abas do menu) - valor fixo, igual
+       nos dois temas (não usa --tema-erro, que no tema escuro é um
+       vermelho claro pensado pra texto/borda e falha o contraste como
+       fundo sólido com texto branco). Declarado só aqui em :root pra
+       herdar em ambos os temas sem precisar repetir.
+       #dc2626 com texto branco: 4.83:1 >= 4.5:1. */
+    --tema-notificacao-bg: #dc2626;
+    --tema-notificacao-texto: #ffffff;
+
     /* Contraste revalidado contra o novo --tema-bg (#e9ecf1, luminância
        0.8367 vs 1.0 do branco puro):
        texto principal #111827: 14.98:1
@@ -218,6 +227,21 @@ button:focus-visible {
 
 .btn-tema:hover:not(:disabled) {
     background-color: var(--tema-acento-bg-suave);
+}
+
+/* Contador de notificação nas abas do menu (ex: "Alertas(2)"). */
+.nav-badge {
+    display: inline-block;
+    margin-left: 3px;
+    padding: 1px 6px;
+    border-radius: 10px;
+    background-color: var(--tema-notificacao-bg);
+    color: var(--tema-notificacao-texto);
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1.5;
+    vertical-align: middle;
+    white-space: nowrap;
 }
 
 .page {

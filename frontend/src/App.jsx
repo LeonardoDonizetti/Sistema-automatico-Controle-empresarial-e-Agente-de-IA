@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Routes, Route, Navigate, NavLink } from "react-router-dom";
+import { api } from "./services/api";
 import Login from "./pages/Login";
 import Atendimentos from "./pages/Atendimentos";
 import AtendimentoDetalhe from "./pages/AtendimentoDetalhe";
@@ -8,6 +9,12 @@ import Usuarios from "./pages/Usuarios";
 import Pedidos from "./pages/Pedidos";
 import Alertas from "./pages/Alertas";
 import Dashboard from "./pages/Dashboard";
+
+const INTERVALO_CONTADORES_MS = 30000;
+
+function renderContador(valor) {
+    return valor > 0 ? <span className="nav-badge">({valor})</span> : null;
+}
 
 function App() {
     const [tema, setTema] = useState(() => localStorage.getItem("tema") || "light");
@@ -31,6 +38,55 @@ function App() {
         localStorage.removeItem("usuario");
         setUsuario(null);
     }
+
+    const [contadores, setContadores] = useState({ alertas: 0, atendimentos: 0, pedidos: 0 });
+
+    useEffect(() => {
+        if (!usuario) {
+            return;
+        }
+
+        let cancelado = false;
+
+        async function carregarContadores() {
+            const resultados = await Promise.allSettled([
+                api.get("/alertas"),
+                api.get("/atendimentos?status=aguardando&porPagina=1"),
+                api.get("/pedidos?status=aguardando_aprovacao&porPagina=1"),
+            ]);
+
+            if (cancelado) {
+                return;
+            }
+
+            setContadores((atual) => {
+                const novo = { ...atual };
+
+                if (resultados[0].status === "fulfilled") {
+                    const { semResponsavel, clienteAguardando } = resultados[0].value.alertas;
+                    novo.alertas = semResponsavel.length + clienteAguardando.length;
+                }
+
+                if (resultados[1].status === "fulfilled") {
+                    novo.atendimentos = resultados[1].value.paginacao.total;
+                }
+
+                if (resultados[2].status === "fulfilled") {
+                    novo.pedidos = resultados[2].value.paginacao.total;
+                }
+
+                return novo;
+            });
+        }
+
+        carregarContadores();
+        const intervalo = setInterval(carregarContadores, INTERVALO_CONTADORES_MS);
+
+        return () => {
+            cancelado = true;
+            clearInterval(intervalo);
+        };
+    }, [usuario]);
 
     if (!usuario) {
         return <Login aoLogar={setUsuario} />;
@@ -64,16 +120,16 @@ function App() {
                             </NavLink>
                         )}
                         <NavLink to="/atendimentos" style={linkStyle}>
-                            Atendimentos
+                            Atendimentos{renderContador(contadores.atendimentos)}
                         </NavLink>
                         <NavLink to="/clientes" style={linkStyle}>
                             Clientes
                         </NavLink>
                         <NavLink to="/pedidos" style={linkStyle}>
-                            Pedidos
+                            Pedidos{renderContador(contadores.pedidos)}
                         </NavLink>
                         <NavLink to="/alertas" style={linkStyle}>
-                            Alertas
+                            Alertas{renderContador(contadores.alertas)}
                         </NavLink>
                         {usuario.cargo === "admin" && (
                             <NavLink to="/usuarios" style={linkStyle}>
