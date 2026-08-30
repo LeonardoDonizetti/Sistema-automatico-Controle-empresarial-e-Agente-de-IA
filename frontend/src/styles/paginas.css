@@ -132,6 +132,11 @@ button:disabled {
 .btn-tema {
     font-size: 16px;
     padding: 4px 8px;
+    border-color: var(--tema-marca);
+}
+
+.btn-tema:hover:not(:disabled) {
+    background-color: var(--tema-marca-bg-suave);
 }
 
 .page {

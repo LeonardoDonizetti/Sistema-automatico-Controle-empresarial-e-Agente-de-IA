@@ -40,7 +40,7 @@ function App() {
         marginRight: 16,
         fontWeight: isActive ? "bold" : "normal",
         textDecoration: "none",
-        color: isActive ? "var(--tema-link-ativo)" : "var(--tema-link)",
+        color: isActive ? "var(--tema-marca)" : "var(--tema-link)",
     });
 
     return (
@@ -56,7 +56,7 @@ function App() {
                 }}
             >
                 <div style={{ display: "flex", alignItems: "center" }}>
-                    <strong style={{ marginRight: 24 }}>Sistema de Atendimento</strong>
+                    <strong style={{ marginRight: 24, color: "var(--tema-marca)" }}>Sistema de Atendimento</strong>
                     <nav>
                         {usuario.cargo === "admin" && (
                             <NavLink to="/dashboard" style={linkStyle}>
