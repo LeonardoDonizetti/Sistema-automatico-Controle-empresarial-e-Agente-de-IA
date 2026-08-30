@@ -295,7 +295,8 @@ textarea:focus {
 
 .data-table thead tr {
     text-align: left;
-    border-bottom: 2px solid var(--tema-borda);
+    background-color: var(--tema-marca-bg-suave);
+    border-bottom: 2px solid var(--tema-marca);
 }
 
 .data-table th,
@@ -430,9 +431,11 @@ textarea:focus {
 
 .card {
     border: 1px solid var(--tema-borda);
+    border-top: 3px solid var(--tema-marca);
     border-radius: 8px;
     padding: 16px;
     min-width: 160px;
+    box-shadow: 0 2px 8px var(--tema-marca-bg-suave);
 }
 
 .card-value {
@@ -499,9 +502,11 @@ textarea:focus {
 
 .order-card {
     border: 1px solid var(--tema-borda);
+    border-left: 3px solid var(--tema-marca);
     border-radius: 4px;
     padding: 12px;
     margin-bottom: 12px;
+    box-shadow: 0 1px 4px var(--tema-marca-bg-suave);
 }
 
 .order-form {
