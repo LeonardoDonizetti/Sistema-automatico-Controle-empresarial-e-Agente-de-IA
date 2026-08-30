@@ -447,10 +447,18 @@ textarea:focus {
     background-color: #f59e0b;
 }
 
+/* position: fixed + inset: 0 tira o login do fluxo do #root (que trava
+   largura em 1126px pro resto do sistema, ver index.css) e cobre a
+   viewport inteira por cima - assim só o login fica tela cheia, sem
+   mexer no layout das outras telas. */
 .login-page {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
     min-height: 100vh;
     display: flex;
     flex-wrap: wrap;
+    overflow-y: auto;
 }
 
 /* Usa o par de botão primário (não --tema-marca direto, que no tema
@@ -475,6 +483,8 @@ textarea:focus {
 .login-painel-titulo {
     color: #ffffff;
     font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
     line-height: 1.3;
     margin: 0 0 16px;
 }
@@ -483,6 +493,7 @@ textarea:focus {
     color: #ffffff;
     opacity: 0.92;
     font-size: 16px;
+    font-weight: 500;
     line-height: 1.6;
     margin: 0;
 }
@@ -494,6 +505,10 @@ textarea:focus {
     justify-content: center;
     padding: 48px 24px;
     box-sizing: border-box;
+    /* Opaco de propósito: sem isso, a borda do #root (que continua lá por
+       baixo, só não faz mais parte do fluxo por causa do position: fixed
+       no .login-page) aparece por transparência nesta faixa. */
+    background-color: var(--tema-bg);
 }
 
 .login-container {
