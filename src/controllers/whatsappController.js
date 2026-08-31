@@ -137,6 +137,12 @@ async function receberWebhook(req, res) {
     console.log("WEBHOOK POST RECEBIDO", new Date().toISOString());
 
     try {
+        const statuses = req.body?.entry?.[0]?.changes?.[0]?.value?.statuses;
+
+        if (statuses) {
+            console.log("STATUS DE ENTREGA RECEBIDO:", JSON.stringify(statuses, null, 2));
+        }
+
         console.log("1 - extraindo mensagem do payload");
         const mensagemRecebida = req.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0];
 
