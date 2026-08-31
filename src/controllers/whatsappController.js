@@ -24,9 +24,13 @@ async function enviarMensagemWhatsapp(telefone, texto) {
         if (!resposta.ok) {
             const corpo = await resposta.text();
             console.error("Erro ao enviar mensagem WhatsApp:", resposta.status, corpo);
+            return false;
         }
+
+        return true;
     } catch (error) {
         console.error("Erro ao enviar mensagem WhatsApp:", error.message);
+        return false;
     }
 }
 
@@ -174,7 +178,8 @@ async function receberWebhook(req, res) {
                 const pergunta = await gerarPerguntaDeNome();
 
                 console.log("7 - enviando pergunta de nome via WhatsApp");
-                await enviarMensagemWhatsapp(telefone, pergunta);
+                const enviou7 = await enviarMensagemWhatsapp(telefone, pergunta);
+                console.log("7b - resultado do envio:", enviou7 ? "sucesso" : "FALHOU");
 
                 console.log("8 - fim do fluxo (primeira mensagem), respondendo 200");
                 return res.sendStatus(200);
@@ -184,8 +189,9 @@ async function receberWebhook(req, res) {
             const validacao = await validarNome(texto);
 
             if (!validacao.eh_nome) {
-                console.log("9b - texto nao parece ser um nome, mantendo AguardandoNomeWhatsapp e pedindo de novo");
-                await enviarMensagemWhatsapp(telefone, PERGUNTA_NOME_RETRY);
+                console.log("9b - texto nao parece ser um nome, enviando pedido de nome novamente");
+                const enviou9b = await enviarMensagemWhatsapp(telefone, PERGUNTA_NOME_RETRY);
+                console.log("9b2 - resultado do envio:", enviou9b ? "sucesso" : "FALHOU");
 
                 console.log("9c - fim do fluxo (nome nao validado), respondendo 200");
                 return res.sendStatus(200);
@@ -209,10 +215,11 @@ async function receberWebhook(req, res) {
             });
 
             console.log("11 - enviando mensagem de confirmacao via WhatsApp");
-            await enviarMensagemWhatsapp(
+            const enviou11 = await enviarMensagemWhatsapp(
                 telefone,
                 `Obrigado, ${novoCliente.nome}! Em breve um atendente vai falar com você.`
             );
+            console.log("11b - resultado do envio:", enviou11 ? "sucesso" : "FALHOU");
 
             console.log("12 - fim do fluxo (cliente criado), respondendo 200");
             return res.sendStatus(200);
