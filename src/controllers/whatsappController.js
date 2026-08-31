@@ -21,12 +21,14 @@ async function enviarMensagemWhatsapp(telefone, texto) {
             }),
         });
 
+        const corpo = await resposta.text();
+
         if (!resposta.ok) {
-            const corpo = await resposta.text();
             console.error("Erro ao enviar mensagem WhatsApp:", resposta.status, corpo);
             return false;
         }
 
+        console.log("Resposta da Graph API (envio OK):", corpo);
         return true;
     } catch (error) {
         console.error("Erro ao enviar mensagem WhatsApp:", error.message);
